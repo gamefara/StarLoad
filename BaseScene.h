@@ -1,0 +1,88 @@
+#pragma once
+
+#include "Task.h"
+#include "ISceneManager.h"
+#include "Animation.h"
+#include <time.h>
+#include <string>
+#include <vector>
+
+//シーンの基底クラス
+class BaseScene :	public Task
+{
+protected:
+	//クラス所有元にシーン切り替えを伝えるインターフェイス
+	ISceneManager* m_pSceneChanger;
+
+public:
+	enum ImageHandle{
+		//ゲームタイトル画面
+		IMAGE_TITLE_SCREEN,
+		IMAGE_TITLE_CURSOR,
+		IMAGE_TITLE_CURSOR_PRACTICE,
+		IMAGE_TITLE_CURSOR_REPLAY,
+		IMAGE_TITLE_CURSOR_CONFIG,
+		IMAGE_TITLE_CURSOR_EXIT,
+		IMAGE_TITLE_PRACTICE_STAGE1,
+		IMAGE_TITLE_PRACTICE_STAGE2,
+		IMAGE_TITLE_PRACTICE_STAGE3,
+		IMAGE_TITLE_PRACTICE_STAGE4,
+		IMAGE_TITLE_PRACTICE_STAGE5,
+		IMAGE_TITLE_PRACTICE_STAGE6,
+		IMAGE_TITLE_PRACTICE_STAGE7,
+		IMAGE_TITLE_PRACTICE_STAGE8,
+		IMAGE_TITLE_PRACTICE_STAGE9,
+		IMAGE_TITLE_PRACTICE_STAGE10,
+		IMAGE_TITLE_PRACTICE_LEVEL_BEGINNER,
+		IMAGE_TITLE_PRACTICE_LEVEL_STANDARD,
+		IMAGE_TITLE_PRACTICE_LEVEL_HARD,
+		IMAGE_TITLE_PRACTICE_LEVEL_EXPERT,
+		IMAGE_TITLE_PRACTICE_LEVEL_CHAOS,
+		IMAGE_TITLE_REPLAY_NO,
+		IMAGE_TITLE_REPLAY_NAME,
+		IMAGE_TITLE_REPLAY_SOUND,
+		IMAGE_TITLE_REPLAY_DAY,
+		IMAGE_TITLE_REPLAY_SCORE,
+		IMAGE_TITLE_REPLAY_JUDGE,
+		IMAGE_TITLE_REPLAY_WORD,
+		IMAGE_TITLE_CONFIG_LEFTALLOW,
+		IMAGE_TITLE_CONFIG_RIGHTALLOW,
+		IMAGE_TITLE_CONFIG_BGM,
+		IMAGE_TITLE_CONFIG_BGM_VOLUME_BAR,
+		IMAGE_TITLE_CONFIG_BGM_VOLUME_PERCENT,
+		IMAGE_TITLE_CONFIG_SE,
+		IMAGE_TITLE_CONFIG_SE_VOLUME_BAR,
+		IMAGE_TITLE_CONFIG_SE_COLUME_PERCENT,
+		IMAGE_TITLE_CONFIG_BACK,
+
+		//ゲーム開始画面
+		IMAGE_PRACTICE_LINE,
+		IMAGE_PRACTICE_BLOCK,
+		IMAGE_PRACTICE_CHARACTOR,
+
+		//ゲームポーズ画面
+		IMAGE_PRACTICE_PAUSE,
+		IMAGE_PRACTICE_PAUSE_DESCRIPTION,
+		IMAGE_PRACTICE_PAUSE_YES,
+		IMAGE_PRACTICE_PAUSE_NO
+	};
+
+	//画像ハンドル格納用変数
+	std::vector<int> m_anImageHandle;
+	const int m_nImageHandleCount = IMAGE_PRACTICE_PAUSE_NO + 1;
+
+	Animation* m_pAnime;
+
+
+	BaseScene();
+	BaseScene(ISceneManager* changer);
+	~BaseScene();
+	virtual void Initialize() override;
+	virtual void Update() override;
+	virtual void DrawLoop() override;
+	virtual void Finalize() override;
+	void SetPhase(Phase ePhase);
+	int GetPhase();
+	std::string GetCurrentDateTime();
+};
+
