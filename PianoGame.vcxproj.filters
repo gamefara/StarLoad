@@ -13,99 +13,123 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Scene">
+    <Filter Include="ソース ファイル\Src">
+      <UniqueIdentifier>{edf1bc5f-65c1-485f-acde-2914efa6bcbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Src\Scene">
       <UniqueIdentifier>{85f14b3f-2398-4f9b-b3f9-109ad2203db5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Scene">
+    <Filter Include="ソース ファイル\Src\Common">
+      <UniqueIdentifier>{0609560e-885a-4368-8fca-e0b3e7a25ecc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Src\Parts">
+      <UniqueIdentifier>{7d99f243-677c-4cde-b4a5-24682d132280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Src\Common\Json">
+      <UniqueIdentifier>{74e08138-cbbf-4944-8b61-6e030c80a9d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Src">
+      <UniqueIdentifier>{9d9d42ec-a3c5-4136-9878-f57f34514228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Src\Common">
+      <UniqueIdentifier>{1828efbc-db55-4ab7-86ec-02feea59d67f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Src\Common\Json">
+      <UniqueIdentifier>{084fa92c-5d26-4796-b4a3-f8552b683388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Src\Parts">
+      <UniqueIdentifier>{db6272c5-8aea-41dd-91cb-db4365997d1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Src\Scene">
       <UniqueIdentifier>{5094548b-8e78-4e4e-a86d-88ec90826f2a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Scene\Practice">
-      <UniqueIdentifier>{0cfdaed8-9de6-453a-bad0-d27e6cf14bbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Scene\Practice">
-      <UniqueIdentifier>{4cb12e29-ebc2-4483-a464-45be144ff02d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Start.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Src\Scene\ISceneManager.cpp">
+      <Filter>ソース ファイル\Src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="ISceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Src\Scene\BaseScene.cpp">
+      <Filter>ソース ファイル\Src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SceneMgr.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Src\Scene\LoadingScene.cpp">
+      <Filter>ソース ファイル\Src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="BaseScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Scene\MenuScene.cpp">
+      <Filter>ソース ファイル\Src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="LoadingScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Scene\PracticeScene.cpp">
+      <Filter>ソース ファイル\Src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="MenuScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Scene\SceneMgr.cpp">
+      <Filter>ソース ファイル\Src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="PracticeScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Start.cpp">
+      <Filter>ソース ファイル\Src</Filter>
     </ClCompile>
-    <ClCompile Include="BattleScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Parts\Player.cpp">
+      <Filter>ソース ファイル\Src\Parts</Filter>
     </ClCompile>
-    <ClCompile Include="ReplayScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Parts\Block.cpp">
+      <Filter>ソース ファイル\Src\Parts</Filter>
     </ClCompile>
-    <ClCompile Include="SoundScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Common\Json\json11.cpp">
+      <Filter>ソース ファイル\Src\Common\Json</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigScene.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
+    <ClCompile Include="Src\Common\Animation.cpp">
+      <Filter>ソース ファイル\Src\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Src\Common\IResourceManager.cpp">
+      <Filter>ソース ファイル\Src\Common</Filter>
     </ClCompile>
-    <ClCompile Include="BlockClass.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Src\Common\Keyboard.cpp">
+      <Filter>ソース ファイル\Src\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Common\Resource.cpp">
+      <Filter>ソース ファイル\Src\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ISceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Src\Scene\ISceneManager.h">
+      <Filter>ヘッダー ファイル\Src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SceneMgr.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Src\Scene\BaseScene.h">
+      <Filter>ヘッダー ファイル\Src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Task.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Src\Scene\LoadingScene.h">
+      <Filter>ヘッダー ファイル\Src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="BaseScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Scene\MenuScene.h">
+      <Filter>ヘッダー ファイル\Src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="LoadingScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Scene\PracticeScene.h">
+      <Filter>ヘッダー ファイル\Src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="MenuScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Scene\SceneMgr.h">
+      <Filter>ヘッダー ファイル\Src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="PracticeScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Task.h">
+      <Filter>ヘッダー ファイル\Src</Filter>
     </ClInclude>
-    <ClInclude Include="BattleScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Parts\Player.h">
+      <Filter>ヘッダー ファイル\Src\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="ReplayScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Parts\Block.h">
+      <Filter>ヘッダー ファイル\Src\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="SoundScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Common\Json\json11.hpp">
+      <Filter>ヘッダー ファイル\Src\Common\Json</Filter>
     </ClInclude>
-    <ClInclude Include="ConfigScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
+    <ClInclude Include="Src\Common\Resource.h">
+      <Filter>ヘッダー ファイル\Src\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Src\Common\Animation.h">
+      <Filter>ヘッダー ファイル\Src\Common</Filter>
     </ClInclude>
-    <ClInclude Include="BlockClass.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Src\Common\IResourceManager.h">
+      <Filter>ヘッダー ファイル\Src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Common\Keyboard.h">
+      <Filter>ヘッダー ファイル\Src\Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
