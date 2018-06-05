@@ -1,20 +1,6 @@
 #include "Keyboard.h"
 
 
-Keyboard::Keyboard()
-{
-	//m_acKey = new char[m_nKeyType];
-	//m_anPushKeyCount = new int[m_nKeyType];
-	//m_anPullKeyCount = new int[m_nKeyType];
-}
-
-Keyboard::~Keyboard()
-{
-	//delete[] m_acKey;
-	//delete[] m_anPushKeyCount;
-	//delete[] m_anPullKeyCount;
-}
-
 void Keyboard::Update(){
 	GetHitKeyStateAll(m_acKey);
 	for(int i = 0; i < m_nKeyType; i++){
@@ -33,17 +19,6 @@ void Keyboard::Update(){
 		else if(m_anPushKeyCount[i] >= INT_MAX - 1) m_anPushKeyCount[i] = 1;
 		else if(m_anPullKeyCount[i] >= INT_MAX - 1) m_anPullKeyCount[i] = 1;
 	}
-}
-
-void Keyboard::DrawLoop(){
-#ifdef _DEBUG
-	DrawFormatString(100, 30, GetColor(255, 255, 255), "IsKeyPush = %d", IsKeyPush(KEY_INPUT_LEFT));
-	DrawFormatString(100, 60, GetColor(255, 255, 255), "IsKeyPushHold = %d", IsKeyPushHold(KEY_INPUT_LEFT));
-	DrawFormatString(100, 90, GetColor(255, 255, 255), "IsKeyPull = %d", IsKeyPull(KEY_INPUT_LEFT));
-	DrawFormatString(100, 120, GetColor(255, 255, 255), "IsKeyPullHold = %d", IsKeyPullHold(KEY_INPUT_LEFT));
-	DrawFormatString(100, 150, GetColor(255, 255, 255), "m_nPushKey = %d", m_anPushKeyCount[KEY_INPUT_LEFT]);
-	DrawFormatString(100, 180, GetColor(255, 255, 255), "m_nPullKey = %d", m_anPullKeyCount[KEY_INPUT_LEFT]);
-#endif _DEBUG
 }
 
 int Keyboard::IsKeyPush(int nKey){

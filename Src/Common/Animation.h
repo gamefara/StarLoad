@@ -11,7 +11,10 @@ public:
 
 	void Update() override;
 	void UpdateCount(const int& nIndexSize, std::vector<int>& anAnimeDeleteList);
-	void DrawLoop() override;
+	/// <summary>
+	/// 毎フレーム描画処理を行います。
+	/// </summary>
+	void DrawLoop() override {}
 
 	/// <summary>
 	/// アニメーションを設定します。
@@ -190,7 +193,7 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	int StopAllAnimation(){
-		int nSize = (int)m_anIndexList.size();
+		int nSize = static_cast<int>(m_anIndexList.size());
 		for(int i = 0; i < nSize; i++){
 			int nIndex = m_anIndexList.at(i);
 			if(m_abAnimation.at(nIndex) != Invalid) m_abAnimation.at(nIndex) = FALSE;
@@ -202,7 +205,7 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	int RestartAllAnimation(){
-		int nSize = (int)m_anIndexList.size();
+		int nSize = static_cast<int>(m_anIndexList.size());
 		for(int i = 0; i < nSize; i++){
 			int nIndex = m_anIndexList.at(i);
 			if(m_abAnimation.at(nIndex) != Invalid) m_abAnimation.at(nIndex) = TRUE;
@@ -218,12 +221,13 @@ public:
 		if(nIndex < 0 || nIndex >= m_nMaxIndex || m_anAnimationMaxCount.at(nIndex) == Invalid) return Invalid;
 		return m_abAnimation.at(nIndex);
 	}
+
 	/// <summary>
 	/// 登録済みのカウンタが全て停止しているかチェックします。
 	/// </summary>
 	/// <returns></returns>
 	int IsAllStoppedAnimation() const{
-		int nSize = (int)m_anIndexList.size();
+		int nSize = static_cast<int>(m_anIndexList.size());
 		int nCount = 0;
 		for(int i = 0; i < nSize; i++){
 			int nIndex = m_anIndexList.at(i);
@@ -240,15 +244,15 @@ public:
 	/// <param name="tStart">nNow = 0の開始値</param>
 	/// <param name="tEnd">nNow = nMaxの終了値</param>
 	/// <returns>現在時間に相当する値</returns>
-	template <typename T> T GetAnimationSmooth(const int& nIndex, const T& tStart, const T& tEnd) const{
-		if(nIndex < 0 || nIndex >= m_nMaxIndex) return (T)Invalid;
+	template<typename T> T GetAnimationSmooth(const int& nIndex, const T& tStart, const T& tEnd) const{
+		if(nIndex < 0 || nIndex >= m_nMaxIndex) return static_cast<T>(Invalid);
 		else if(tStart == tEnd) return tEnd;
 
-		T tNow = (T)m_anAnimationNowCount.at(nIndex);
-		T tMax = (T)m_anAnimationMaxCount.at(nIndex);
+		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
+		T tMax = static_cast<T>(m_anAnimationMaxCount.at(nIndex));
 
-		T tRatio = tNow / tMax;
-		T tValue = tStart + (tEnd - tStart) * tRatio;
+		float fRatio = static_cast<float>(tNow) / static_cast<float>(tMax);
+		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
 	}
 	/// <summary>
@@ -258,14 +262,15 @@ public:
 	/// <param name="tStart">nNow = 0の開始値</param>
 	/// <param name="tEnd">nNow = nMaxの終了値</param>
 	/// <returns>現在時間に相当する値</returns>
-	template <typename T> T GetAnimationAccelerate(const int& nIndex, const T& tStart, const T& tEnd) const{
-		if(nIndex < 0 || nIndex >= m_nMaxIndex) return (T)Invalid;
+	template<typename T> T GetAnimationAccelerate(const int& nIndex, const T& tStart, const T& tEnd) const{
+		if(nIndex < 0 || nIndex >= m_nMaxIndex) return static_cast<T>(Invalid);
 		else if(tStart == tEnd) return tEnd;
 
-		T tNow = (T)m_anAnimationNowCount.at(nIndex);
-		T tMax = (T)m_anAnimationMaxCount.at(nIndex);
-		T tRatio = (tNow / tMax) * (tNow / tMax);
-		T tValue = tStart + (tEnd - tStart) * tRatio;
+		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
+		T tMax = static_cast<T>(m_anAnimationMaxCount.at(nIndex));
+		float fDiv = static_cast<float>(tNow) / static_cast<float>(tMax);
+		float fRatio = fDiv * fDiv;
+		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
 	};
 	/// <summary>
@@ -275,14 +280,15 @@ public:
 	/// <param name="tStart">nNow = 0の開始値</param>
 	/// <param name="tEnd">nNow = nMaxの終了値</param>
 	/// <returns>現在時間に相当する値</returns>
-	template <typename T> T GetAnimationSlowDown(const int& nIndex, const T& tStart, const T& tEnd) const{
-		if(nIndex < 0 || nIndex >= m_nMaxIndex) return (T)Invalid;
+	template<typename T> T GetAnimationSlowDown(const int& nIndex, const T& tStart, const T& tEnd) const{
+		if(nIndex < 0 || nIndex >= m_nMaxIndex) return static_cast<T>(Invalid);
 		else if(tStart == tEnd) return tEnd;
 
-		T tNow = (T)m_anAnimationNowCount.at(nIndex);
-		T tMax = (T)m_anAnimationMaxCount.at(nIndex);
-		T tRatio = 1 - (1 - (tNow / tMax)) * (1 - (tNow / tMax));
-		T tValue = tStart + (tEnd - tStart) * tRatio;
+		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
+		T tMax = static_cast<T>(m_anAnimationMaxCount.at(nIndex));
+		float fDiv = static_cast<float>(tNow) / static_cast<float>(tMax);
+		float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
 	};
 	/// <summary>
@@ -290,25 +296,26 @@ public:
 	/// </summary>
 	/// <param name="nIndex">要素番号</param>
 	/// <param name="tStart">nNow = 0の開始値</param>
-	/// <param name="tCenter">nNow = nMax / 2の中間値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
 	/// <param name="tEnd">nNow = nMaxの終了値</param>
 	/// <returns></returns>
-	template <typename T> T GetAnimationSmoothLaps(const int& nIndex, const T& tStart, const T& tCenter, const T& tEnd) const{
-		if(nIndex < 0 || nIndex >= m_nMaxIndex) return (T)Invalid;
+	template<typename T> T GetAnimationSmoothLaps(const int& nIndex, const T& tStart, const T& tMiddle, const T& tEnd) const{
+		if(nIndex < 0 || nIndex >= m_nMaxIndex) return static_cast<T>(Invalid);
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
 
-		T tNow = (T)m_anAnimationNowCount.at(nIndex);
-		T tMiddle = (T)(m_anAnimationMaxCount.at(nIndex) / (T)2);
+		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
+		T tCenter = static_cast<T>(m_anAnimationMaxCount.at(nIndex) / static_cast<T>(2));
 		T tValue;
-		if(tNow < tMiddle){
-			if(tStart == tCenter) return tCenter;
-			T tRatio = tNow / tMiddle;
-			tValue = tStart + (tCenter - tStart) * tRatio;
+		if(tNow < tCenter){
+			if(tStart == tMiddle) return tMiddle;
+			float fRatio = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
-			if(tCenter == tEnd) return tEnd;
-			tNow -= tMiddle;
-			T tRatio = tNow / tMiddle;
-			tValue = tCenter + (tEnd - tCenter) * tRatio;
+			if(tMiddle == tEnd) return tEnd;
+			tNow -= tCenter;
+			float fRatio = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
 	};
@@ -317,25 +324,28 @@ public:
 	/// </summary>
 	/// <param name="nIndex">要素番号</param>
 	/// <param name="tStart">nNow = 0の開始値</param>
-	/// <param name="tCenter">nNow = nMax / 2の中間値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
 	/// <param name="tEnd">nNow = nMaxの終了値</param>
 	/// <returns></returns>
-	template <typename T> T GetAnimationAccelerateLaps(const int& nIndex, const T& tStart, const T& tCenter, const T& tEnd) const{
-		if(nIndex < 0 || nIndex >= m_nMaxIndex) return (T)Invalid;
+	template<typename T> T GetAnimationAccelerateLaps(const int& nIndex, const T& tStart, const T& tMiddle, const T& tEnd) const{
+		if(nIndex < 0 || nIndex >= m_nMaxIndex) return static_cast<T>(Invalid);
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
 
-		T tNow = (T)m_anAnimationNowCount.at(nIndex);
-		T tMiddle = (T)(m_anAnimationMaxCount.at(nIndex) / (T)2);
+		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
+		T tCenter = static_cast<T>(m_anAnimationMaxCount.at(nIndex) / static_cast<T>(2));
 		T tValue;
-		if(tNow < tMiddle){
-			if(tStart == tCenter) return tCenter;
-			T tRatio = (tNow / tMiddle) * (tNow / tMiddle);
-			tValue = tStart + (tCenter - tStart) * tRatio;
+		if(tNow < tCenter){
+			if(tStart == tMiddle) return tMiddle;
+			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			float fRatio = fDiv * fDiv;
+			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
-			if(tCenter == tEnd) return tEnd;
-			tNow -= tMiddle;
-			T tRatio = (tNow / tMiddle) * (tNow / tMiddle);
-			tValue = tCenter + (tEnd - tCenter) * tRatio;
+			if(tMiddle == tEnd) return tEnd;
+			tNow -= tCenter;
+			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			float fRatio = fDiv * fDiv;
+			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
 	};
@@ -344,26 +354,29 @@ public:
 	/// </summary>
 	/// <param name="nIndex">要素番号</param>
 	/// <param name="tStart">nNow = 0の開始値</param>
-	/// <param name="tCenter">nNow = nMax / 2の中間値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
 	/// <param name="tEnd">nNow = nMaxの終了値</param>
 	/// <returns></returns>
-	template <typename T> T GetAnimationSlowDownLaps(const int& nIndex, const T& tStart, const T& tCenter, const T& tEnd) const{
-		if(nIndex < 0 || nIndex >= m_nMaxIndex) return (T)Invalid;
+	template<typename T> T GetAnimationSlowDownLaps(const int& nIndex, const T& tStart, const T& tMiddle, const T& tEnd) const{
+		if(nIndex < 0 || nIndex >= m_nMaxIndex) return static_cast<T>(Invalid);
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
 
-		T tNow = (T)m_anAnimationNowCount.at(nIndex);
-		T tMiddle = (T)(m_anAnimationMaxCount.at(nIndex) / (T)2);
+		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
+		T tCenter = static_cast<T>(m_anAnimationMaxCount.at(nIndex) / static_cast<T>(2));
 
 		T tValue;
-		if(tNow < tMiddle){
-			if(tStart == tCenter) return tCenter;
-			T tRatio = 1 - (1 - (tNow / tMiddle)) * (1 - (tNow / tMiddle));
-			tValue = tStart + (tCenter - tStart) * tRatio;
+		if(tNow < tCenter){
+			if(tStart == tMiddle) return tMiddle;
+			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
-			if(tCenter == tEnd) return tEnd;
-			tNow -= tMiddle;
-			T tRatio = 1 - (1 - (tNow / tMiddle)) * (1 - (tNow / tMiddle));
-			tValue = tCenter + (tEnd - tCenter) * tRatio;
+			if(tMiddle == tEnd) return tEnd;
+			tNow -= tCenter;
+			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
 	};
@@ -372,16 +385,17 @@ public:
 	/// </summary>
 	/// <param name="nIndex">要素番号</param>
 	/// <param name="tStart">nNow = 0の開始値</param>
-	/// <param name="tCenter">nNow = nMax / 2の中間値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
 	/// <param name="tEnd">nNow = nMaxの終了値</param>
 	/// <returns></returns>
-	template <typename T> T GetAnimationGravityLaps(const int& nIndex, const T& tStart, const T& tCenter, const T& tEnd) const{
-		if(nIndex < 0 || nIndex >= m_nMaxIndex) return (T)Invalid;
+	template<typename T> T GetAnimationGravityLaps(const int& nIndex, const T& tStart, const T& tMiddle, const T& tEnd) const{
+		if(nIndex < 0 || nIndex >= m_nMaxIndex) return static_cast<T>(Invalid);
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
 
-		T tNow = (T)m_anAnimationNowCount.at(nIndex);
-		T tMiddle = (T)(m_anAnimationMaxCount.at(nIndex) / (T)2);
-		if(tNow < tMiddle) return GetAnimationSlowDownLaps(nIndex, tStart, tCenter, tEnd);
-		else return GetAnimationAccelerateLaps(nIndex, tStart, tCenter, tEnd);
+		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
+		T tCenter = m_anAnimationMaxCount.at(nIndex) / static_cast<T>(2);
+		if(tNow < tCenter) return GetAnimationSlowDownLaps(nIndex, tStart, tMiddle, tEnd);
+		else return GetAnimationAccelerateLaps(nIndex, tStart, tMiddle, tEnd);
 	};
 
 	//↓nIndexのアニメーションを介さず値を取得する用
@@ -395,12 +409,12 @@ public:
 	/// <param name="nNow">現在時間</param>
 	/// <param name="nMax">nNowの最大値</param>
 	/// <returns>現在時間に相当する値</returns>
-	template <typename T> T GetMomentSmooth(const T& tStart, const T& tEnd, const int nNow, const int nMax){
-		if(tNow <= 0) return tStart;
-		if(tStart == tEnd || tNow >= tMax || tMax <= 0) return tEnd;
+	template<typename T> T GetMomentSmooth(const T& tStart, const T& tEnd, const int nNow, const int nMax){
+		if(nNow <= 0) return tStart;
+		if(tStart == tEnd || nNow >= nMax || nMax <= 0) return tEnd;
 
-		T tRatio = (T)nNow / (T)nMax;
-		T tValue = tStart + (tEnd - tStart) * tRatio;
+		float fRatio = static_cast<float>(nNow) / static_cast<float>(nMax);
+		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
 	};
 	/// <summary>
@@ -412,12 +426,13 @@ public:
 	/// <param name="nNow">現在時間</param>
 	/// <param name="nMax">nNowの最大値</param>
 	/// <returns>現在時間に相当する値</returns>
-	template <typename T> T GetMomentAccelerate(const T& tStart, const T& tEnd, const int nNow, const int nMax){
-		if(tNow <= 0) return tStart;
-		if(tStart == tEnd || tNow >= tMax || tMax <= 0) return tEnd;
+	template<typename T> T GetMomentAccelerate(const T& tStart, const T& tEnd, const int nNow, const int nMax){
+		if(nNow <= 0) return tStart;
+		if(tStart == tEnd || nNow >= nMax || nMax <= 0) return tEnd;
 
-		T tRatio = ((T)nNow / (T)nMax) * ((T)nNow / (T)nMax);
-		T tValue = tStart + (tEnd - tStart) * tRatio;
+		float fDiv = static_cast<float>(nNow) / static_cast<float>(nMax);
+		float fRatio = fDiv * fDiv;
+		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
 	};
 	/// <summary>
@@ -429,13 +444,123 @@ public:
 	/// <param name="nNow">現在時間</param>
 	/// <param name="nMax">nNowの最大値</param>
 	/// <returns>現在時間に相当する値</returns>
-	template <typename T> T GetMomentSlowDown(const T& tStart, const T& tEnd, const int nNow, const int nMax){
-		if(tNow <= 0) return tStart;
-		if(tStart == tEnd || tNow >= tMax || tMax <= 0) return tEnd;
+	template<typename T> T GetMomentSlowDown(const T& tStart, const T& tEnd, const int nNow, const int nMax){
+		if(nNow <= 0) return tStart;
+		if(tStart == tEnd || nNow >= nMax || nMax <= 0) return tEnd;
 
-		T tRatio = 1 - (1 - ((T)nNow / (T)nMax)) * (1 - ((T)nNow / (T)nMax));
-		T fValue = fStart + (fEnd - fStart) * tRatio;
-		return fValue;
+		float fDiv = static_cast<float>(nNow) / static_cast<float>(nMax);
+		float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
+		return tValue;
+	};
+	/// <summary>
+	/// 等速往復変化の内分カウンタです。
+	/// </summary>
+	/// <param name="tStart">nNow = 0の開始値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
+	/// <param name="tEnd">nNow = nMaxの終了値</param>
+	/// <param name="nNow">現在時間</param>
+	/// <param name="nCenter">nNowの中間値</param>
+	/// <param name="nMax">nNowの最大値</param>
+	/// <returns></returns>
+	template<typename T> T GetMomentSmoothLaps(const T& tStart, const T& tMiddle, const T& tEnd, int nNow, const int nCenter, const int nMax) const{
+		if(nNow <= 0) return tStart;
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
+		if(nNow >= nMax) return tEnd;
+
+		T tValue;
+		if(nNow < nCenter){
+			if(tStart == tMiddle) return tMiddle;
+			float fRatio = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
+		}
+		else{
+			if(tMiddle == tEnd) return tEnd;
+			nNow -= nCenter;
+			float fRatio = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
+		}
+		return tValue;
+	};
+	/// <summary>
+	/// 開始値～中間値、中間値→終了値までそれぞれ加速往復変化の内分カウンタです。
+	/// </summary>
+	/// <param name="tStart">nNow = 0の開始値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
+	/// <param name="tEnd">nNow = nMaxの終了値</param>
+	/// <param name="nNow">現在時間</param>
+	/// <param name="nCenter">nNowの中間値</param>
+	/// <param name="nMax">nNowの最大値</param>
+	/// <returns></returns>
+	template<typename T> T GetMomentAccelerateLaps(const T& tStart, const T& tMiddle, const T& tEnd, int nNow, const int nCenter, const int nMax) const{
+		if(nNow <= 0) return tStart;
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
+		if(nNow >= nMax) return tEnd;
+
+		T tValue;
+		if(nNow < nCenter){
+			if(tStart == tMiddle) return tMiddle;
+			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			float fRatio = fDiv * fDiv;
+			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
+		}
+		else{
+			if(tMiddle == tEnd) return tEnd;
+			nNow -= nCenter;
+			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			float fRatio = fDiv * fDiv;
+			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
+		}
+		return tValue;
+	};
+	/// <summary>
+	/// 開始値～中間値、中間値→終了値までそれぞれ減速往復変化の内分カウンタです。
+	/// </summary>
+	/// <param name="tStart">nNow = 0の開始値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
+	/// <param name="tEnd">nNow = nMaxの終了値</param>
+	/// <param name="nNow">現在時間</param>
+	/// <param name="nCenter">nNowの中間値</param>
+	/// <param name="nMax">nNowの最大値</param>
+	/// <returns></returns>
+	template<typename T> T GetAnimationSlowDownLaps(const T& tStart, const T& tMiddle, const T& tEnd, int nNow, const int nCenter, const int nMax) const{
+		if(nNow <= 0) return tStart;
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
+		if(nNow >= nMax) return tEnd;
+
+		T tValue;
+		if(nNow < nCenter){
+			if(tStart == tMiddle) return tMiddle;
+			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
+		}
+		else{
+			if(tMiddle == tEnd) return tEnd;
+			nNow -= nCenter;
+			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
+		}
+		return tValue;
+	};
+	/// <summary>
+	/// 開始値～中間値まで減速、中間値→終了値まで加速の往復変化の内分カウンタです。
+	/// </summary>
+	/// <param name="tStart">nNow = 0の開始値</param>
+	/// <param name="tMiddle">nNow = nMax / 2の中間値</param>
+	/// <param name="tEnd">nNow = nMaxの終了値</param>
+	/// <param name="nNow">現在時間</param>
+	/// <param name="nCenter">nNowの中間値</param>
+	/// <param name="nMax">nNowの最大値</param>
+	/// <returns></returns>
+	template<typename T> T GetAnimationGravityLaps(const T& tStart, const T& tMiddle, const T& tEnd, int nNow, const int nCenter, const int nMax) const{
+		if(nNow <= 0) return tStart;
+		if(tStart == tMiddle && tMiddle == tEnd) return tStart;
+		if(nNow >= nMax) return tEnd;
+
+		if(nNow < nCenter) return GetAnimationSlowDownLaps(tStart, tMiddle, tEnd, nNow, nCenter, nMax);
+		else return GetAnimationAccelerateLaps(tStart, tMiddle, tEnd, nNow, nCenter, nMax);
 	};
 private:
 	const int m_nMaxIndex = 128;
@@ -448,4 +573,4 @@ private:
 	std::vector<int> m_abAnimation;
 	std::vector<int> m_anIndexList;
 };
-
+ 

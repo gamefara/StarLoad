@@ -3,7 +3,7 @@
 SceneMgr::SceneMgr() : m_eNextScene(SCENE_UNKNOWN), m_ePhase(PHASE_LOAD)
 {
 	if(m_pResource == nullptr) m_pResource = new Resource();
-	if(m_pScene == nullptr) m_pScene = (BaseScene*) new LoadingScene(this, this);
+	if(m_pScene == nullptr) m_pScene = dynamic_cast<BaseScene*>(new LoadingScene(this, this));
 }
 
 SceneMgr::~SceneMgr()
@@ -24,13 +24,13 @@ void SceneMgr::Update(){
 
 		switch(m_eNextScene){
 		case SCENE_LOAD:
-			m_pScene = (BaseScene*) new LoadingScene(this, this);
+			m_pScene = dynamic_cast<BaseScene*>(new LoadingScene(this, this));
 			break;
 		case SCENE_MENU:
-			m_pScene = (BaseScene*) new MenuScene(this, this);
+			m_pScene = dynamic_cast<BaseScene*>(new MenuScene(this, this));
 			break;
 		case SCENE_PRACTICE:
-			m_pScene = (BaseScene*) new PracticeScene(this, this);
+			m_pScene = dynamic_cast<BaseScene*>(new PracticeScene(this, this));
 			break;
 		}
 		m_eNextScene = SCENE_UNKNOWN;

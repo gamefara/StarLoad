@@ -7,13 +7,13 @@ class Keyboard : public Task
 {
 public:
 	
-	Keyboard();
-	~Keyboard();
+	Keyboard(){}
+	~Keyboard(){}
 
-	void Initialize(){};
+	void Initialize(){}
 	void Update() override;
-	void DrawLoop() override;
-	void Finalize(){};
+	void DrawLoop(){}
+	void Finalize(){}
 
 	int IsKeyPush(int nKey);
 	int IsKeyPull(int nKey);

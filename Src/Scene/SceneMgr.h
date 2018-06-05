@@ -17,7 +17,6 @@ private:
 	Scene m_eNextScene;
 	Phase m_ePhase;
 	Level m_eLevel;
-
 public:
 	SceneMgr();
 	~SceneMgr();
@@ -35,9 +34,11 @@ public:
 	int GetLevel()							override { return m_eLevel; };
 
 	int GetGraphicsHandle(ResourceImage eImage)	{ return m_pResource->GetGraphicsHandle(eImage); }
-	int GetSoundsHandle()								{ return m_pResource->GetSoundsHandle(); }
+	int GetSoundsHandle(ResourceSound eSound)		{ return m_pResource->GetSoundsHandle(eSound); }
 	int GetGraphicsLoadingCount()						{ return m_pResource->GetGraphicsLoadingCount(); }
 	int GetSoundsLoadingCount()						{ return m_pResource->GetSoundsLoadingCount(); }
 	int IsLoadGraphics()									{ return m_pResource->IsLoadGraphics(); }
 	int IsLoadSounds()									{ return m_pResource->IsLoadSounds(); }
+	void SetSoundsBGMVolume(int nPercent)			{ m_pResource->SetSoundsBGMVolume(nPercent); }
+	void SetSoundsSEVolume(int nPercent)			{ m_pResource->SetSoundsSEVolume(nPercent); }
 };

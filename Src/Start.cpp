@@ -15,13 +15,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int){
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	//newêÈåæÇµÇ»Ç¢ÇÃÇ≈èIóπéûé©ìÆÇ≈deleteÇ≥ÇÍÇÈ
-	SceneMgr sceneMgr;
-	sceneMgr.Initialize();
-	while(IsContinueGame() && sceneMgr.GetPhase() != PHASE_EXIT){
-		sceneMgr.Update();
-		sceneMgr.DrawLoop();
+	SceneMgr m_pManager;
+	m_pManager.Initialize();
+	while(IsContinueGame() && m_pManager.GetPhase() != PHASE_EXIT){
+		m_pManager.Update();
+		m_pManager.DrawLoop();
 	}
-	sceneMgr.Finalize();
+	m_pManager.Finalize();
 	DxLib_End();
 	return Success;
 }

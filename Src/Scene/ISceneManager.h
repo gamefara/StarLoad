@@ -14,9 +14,9 @@ enum Phase{
 	PHASE_LEVEL,		//レベル選択
 	PHASE_RESULT,		//リザルト
 	PHASE_CONFIG,		//コンフィグ選択
+	PHASE_MANUAL,		//マニュアル
 	PHASE_EXIT,			//ゲーム終了
 	PHASE_GAMEPLAY,	//ゲーム開始
-	PHASE_STORAGE,		//保存
 
 	PHASE_UNKNOWN
 };

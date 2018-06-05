@@ -18,6 +18,7 @@ private:
 		CURSOR_MENU_PRACTICE,
 		CURSOR_MENU_RESULT,
 		CURSOR_MENU_CONFIG,
+		CURSOR_MENU_MANUAL,
 		CURSOR_MENU_EXIT,
 		CURSOR_MENU_COUNT
 	};
@@ -56,7 +57,10 @@ private:
 		const int m_nConfigBGMCursorMaxPos = (int)ConfigCursor::CURSOR_CONFIG_BGM_COUNT;
 		const int m_nConfigSECursorMaxPos = (int)ConfigCursor::CURSOR_CONFIG_SE_COUNT;
 	};
-	StructReplayData* m_apData[(int)Level::LEVEL_UNKNOWN];
+
+	int m_nBackGroundHandle = m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_BACKGROUND);
+
+	StructReplayData* m_apData[static_cast<int>(Level::LEVEL_UNKNOWN)];
 	StructCursor* m_pCursor;
 
 	//メニュー画面
@@ -66,10 +70,10 @@ private:
 	int m_bDownKeyPush = FALSE;
 	int m_bOKKeyPush = FALSE;
 	int m_bCancelKeyPush = FALSE;
-	int m_nAnimeIndex;
-	int m_nAnimeLoopIndex;
+	int m_nAnimeIndex = Invalid;
+	int m_nAnimeLoopIndex = Invalid;
 
-	float m_nDrawMenuNowAngle;
+	float m_nDrawMenuNowAngle = 0.0f;
 
 	//カーソル移動時間
 	const int m_nMoveCursorCount = 15;
@@ -92,9 +96,11 @@ private:
 	const int& GetVolumeCursorMaxPos();
 
 	void DrawPhaseTitle();
+	int GetDrawMenuHandle(int nIndex);
+	int GetDrawMenuDescriptionHandle(int nIndex);
 	void DrawPhaseLevel();
+	int GetDrawLevelHandle(int nIndex);
 	void DrawPhaseResult();
 	void DrawPhaseConfig();
-
-	void DrawFixMenu(const char* asList[]);
+	void DrawPhaseManual();
 };

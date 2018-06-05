@@ -12,11 +12,15 @@ LoadingScene::LoadingScene(ISceneManager* pChanger, IResourceManager* pResource)
 /// </summary>
 /// <returns>TRUE</returns>
 void LoadingScene::Update(){
-	if(m_pResource->IsLoadSounds()) m_nLoadCount++;
-	else if(m_pResource->IsLoadGraphics()) m_nLoadCount++;
+	if(m_pResource->IsLoadGraphics()) m_nLoadCount++;
+	else if(m_pResource->IsLoadSounds()) m_nLoadCount++;
 	else{
+		if(!m_bFinishScene){
+			if(m_pKey->IsKeyPush(KEY_INPUT_Z)) m_bFinishScene = TRUE;
+			return;
+		}
 		//ゲージ100％から1秒してから次のシーンへ
-		if(m_nWaitCount >= 60){
+		if(m_nWaitCount >= m_nWaitMaxCount){
 			m_pSceneChanger->ChangeScene(SCENE_MENU);
 			SetPhase(PHASE_TITLE);
 		}
@@ -29,19 +33,36 @@ void LoadingScene::Update(){
 /// </summary>
 /// <returns>TRUE</returns>
 void LoadingScene::DrawLoop(){
-	DrawFormatString(0, 0, GetColor(255, 255, 255), "Load");
+	int nAlpha = 255 - (255 / m_nWaitMaxCount) * m_nWaitCount;
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, nAlpha);
+	DrawDescription();
 	DrawLoadGauge();
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - nAlpha);
+	//フェードアウト
+	DrawGraph(0, 0, m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_BACKGROUND), FALSE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+}
+
+void LoadingScene::DrawDescription(){
+	DrawRotaGraph(WindowCenX, WindowCenY / 2, 1, 0, m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_LOAD_TITLE), TRUE);
+
+	if(m_nLoadCount != m_nResourceCount || m_nWaitCount % 4 / 2 != 0) return;
+	DrawRotaGraph(WindowCenX, WindowCenY + 30, 1, 0, m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_LOAD_START), TRUE);
 }
 
 void LoadingScene::DrawLoadGauge(){
-	//5F毎にLoadingの後に「.」を表示 or 非表示
-	std::string sLoadWord = "Now Loading ";
-	int nAddDotCount = ((m_nLoadCount + m_nWaitCount) % 20) / 5;
-	for(int i = 0; i < nAddDotCount; i++) sLoadWord.append(".");
+	float fPi = static_cast<float>(M_PI);
+	float fRadian = (2 * fPi / 360) * (GetNowCount() / 2);
+	int nAlpha = static_cast<int>(255 - 127 * sinf(fRadian));
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, nAlpha);
+	DrawRotaGraph(WindowCenX / 2, 360, 1, 0, m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_LOAD_LOADING), TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	int nLength = 50 + static_cast<int>((500.0f / m_nResourceCount) * m_nLoadCount);
+	DrawExtendGraph(50, 376, 550, 400, m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_LOAD_GAUGE_EMPTY), TRUE);
+	DrawExtendGraph(50, 376, nLength, 400, m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_LOAD_GAUGE_FILL), TRUE);
 
 	float fRatio = (float)m_nLoadCount / (float)m_nResourceCount;
-	DrawString(0, 350, sLoadWord.c_str(), GetColor(255, 255, 255));
-	DrawFormatString(280, 350, GetColor(255, 255, 255), "%.2f%%", fRatio * 100);
-	DrawBox(0, 382, 300, 406, GetColor(255, 255, 255), TRUE);
-	DrawBox(0, 382, m_nLoadCount * 300 / m_nResourceCount, 406, GetColor(255, 128, 255), TRUE);
+	DrawFormatString(480, 350, GetColor(255, 255, 255), "%.2f%%", fRatio * 100);
 }

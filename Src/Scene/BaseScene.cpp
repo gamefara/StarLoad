@@ -43,6 +43,8 @@ void BaseScene::Finalize(){
 }
 
 void BaseScene::InitializeLoadConfigStream(){
+	int nBGMVolume = 0;
+	int nSEVolume = 0;
 	try
 	{
 		m_fStream.close();
@@ -61,8 +63,10 @@ void BaseScene::InitializeLoadConfigStream(){
 		if(!jsonConfig["BGM"].is_number()) throw std::exception();
 		if(!jsonConfig["SE"].is_number()) throw std::exception();
 
-		SetGameDataVolumeBGM(jsonConfig["BGM"].int_value());
-		SetGameDataVolumeSE(jsonConfig["SE"].int_value());
+		nBGMVolume = jsonConfig["BGM"].int_value();
+		nSEVolume = jsonConfig["SE"].int_value();
+		SetGameDataVolumeBGM(nBGMVolume);
+		SetGameDataVolumeSE(nSEVolume);
 	}
 	catch(...)
 	{
@@ -71,10 +75,14 @@ void BaseScene::InitializeLoadConfigStream(){
 		m_fStream.clear();
 		m_fStream.open(m_sConfigFileName, std::ios_base::out);
 		m_fStream << JsonConfigData.dump() << std::endl;
-		SetGameDataVolumeBGM(JsonConfigData["BGM"].int_value());
-		SetGameDataVolumeSE(JsonConfigData["SE"].int_value());
+		nBGMVolume = JsonConfigData["BGM"].int_value();
+		nSEVolume = JsonConfigData["SE"].int_value();
+		SetGameDataVolumeBGM(nBGMVolume);
+		SetGameDataVolumeSE(nSEVolume);
 	}
 	m_fStream.close();
+	m_pResource->SetSoundsBGMVolume(nBGMVolume);
+	m_pResource->SetSoundsSEVolume(nSEVolume);
 }
 
 void BaseScene::InitializeLoadResultStream(){
@@ -156,10 +164,7 @@ int BaseScene::EnableConvertDateTime(std::string sDatetime){
 		tStruct.tm_sec = std::stoi(sDatetime.substr(17, 2));
 		if(mktime(&tStruct) == Invalid) throw std::exception();
 	}
-	catch(const std::exception&)
-	{
-		bConvert = FALSE;
-	}
+	catch(const std::exception&){ bConvert = FALSE; }
 	return bConvert;
 }
 
@@ -215,6 +220,11 @@ std::string BaseScene::GetNowDateTime(){
 	std::string sHour = std::to_string(tStruct.tm_hour);
 	std::string sMinute = std::to_string(tStruct.tm_min);
 	std::string sSecond = std::to_string(tStruct.tm_sec);
+	if(sMonth.size() == 1) sMonth = "0" + sMonth;
+	if(sDay.size() == 1) sDay = "0" + sDay;
+	if(sHour.size() == 1) sHour = "0" + sHour;
+	if(sMinute.size() == 1) sMinute = "0" + sMinute;
+	if(sSecond.size() == 1) sSecond = "0" + sSecond;
 	std::string sDateTime = sYear + "/" + sMonth + "/" + sDay + " " + sHour + ":" + sMinute + ":" + sSecond;
 	return sDateTime;
 }

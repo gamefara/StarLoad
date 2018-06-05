@@ -1,4 +1,5 @@
 #pragma once
+#define _USE_MATH_DEFINES	//円周率πを使用するのに必要
 
 #include "../Task.h"
 #include "../Common/IResourceManager.h"
@@ -10,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
 
 //シーンの基底クラス
 class BaseScene : public Task
@@ -34,7 +36,7 @@ public:
 	int GetLevel()						{ return m_pSceneChanger->GetLevel(); };
 
 	int GetGraphicsHandle(ResourceImage eImage)	{ return m_pResource->GetGraphicsHandle(eImage); };
-	int GetSoundsHandle()								{ return m_pResource->GetSoundsHandle(); };
+	int GetSoundsHandle(ResourceSound eSound)		{ return m_pResource->GetSoundsHandle(eSound); };
 	int GetGraphicsLoadingCount()						{ return m_pResource->GetGraphicsLoadingCount(); };
 	int GetSoundsLoadingCount()						{ return m_pResource->GetSoundsLoadingCount(); };
 	int IsLoadGraphics()									{ return m_pResource->IsLoadGraphics(); };
