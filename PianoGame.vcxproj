@@ -23,6 +23,7 @@
     <ProjectGuid>{9D6AF38D-A608-4696-8BD0-F0F75F4C5A8C}</ProjectGuid>
     <RootNamespace>PianoGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>StarLoad</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
