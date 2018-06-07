@@ -64,6 +64,11 @@ private:
 		"Resource/Graphics/se.png",
 		"Resource/Graphics/config_back.png",
 		"Resource/Graphics/config_display_description.png",
+		"Resource/Graphics/manual_page1.png",
+		"Resource/Graphics/manual_page2.png",
+		"Resource/Graphics/manual_page3.png",
+		"Resource/Graphics/manual_page4.png",
+		"Resource/Graphics/manual_display_description.png",
 		"Resource/Graphics/background.png",
 		"Resource/Graphics/magic1.png",
 		"Resource/Graphics/magic2.png",
@@ -73,20 +78,7 @@ private:
 		"Resource/Graphics/star1.png",
 		"Resource/Graphics/star2.png",
 		"Resource/Graphics/star3.png",
-		"Resource/Graphics/star4.png",
-		"Resource/Graphics/star5.png",
-		"Resource/Graphics/star6.png",
-		"Resource/Graphics/star7.png",
-		"Resource/Graphics/aquablue.png",
-		"Resource/Graphics/black.png",
-		"Resource/Graphics/blue.png",
-		"Resource/Graphics/green.png",
-		"Resource/Graphics/orange.png",
-		"Resource/Graphics/purple.png",
-		"Resource/Graphics/red.png",
-		"Resource/Graphics/white.png",
-		"Resource/Graphics/yellow.png",
-		"Resource/Graphics/game_score.png"
+		"Resource/Graphics/star4.png"
 	};
 	const char* m_asSoundsList[m_nSoundsCount] = {
 		"Resource/Sounds/BGM/title.ogg",

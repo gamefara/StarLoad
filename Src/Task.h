@@ -29,3 +29,11 @@ public:
 	void ReverseFlag(int& bFlag){ bFlag = !bFlag; }
 };
 
+/// <summary>
+/// ポインタをデリート後にヌルポインタにする
+/// </summary>
+template <class T>
+inline void DeletePtr(T*& p) {
+	delete p;
+	p = nullptr;
+}

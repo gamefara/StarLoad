@@ -86,10 +86,10 @@ protected:
 	int EnableConvertDateTime(std::string sDatetime);
 	std::string GetNowDateTime();
 
-	void SetGameDataVolumeBGM(int nVolume){ m_nVolumeBGM = nVolume; }
+	void SetGameDataVolumeBGM(int nVolume)	{ m_nVolumeBGM = nVolume; }
 	void SetGameDataVolumeSE(int nVolume)	{ m_nVolumeSE = nVolume; }
-	int GetGameDataVolumeBGM()		const { return m_nVolumeBGM; }
-	int GetGameDataVolumeSE()			const	{ return m_nVolumeSE; }
+	int GetGameDataVolumeBGM()	const			{ return m_nVolumeBGM; }
+	int GetGameDataVolumeSE()	const			{ return m_nVolumeSE; }
 
 	void SetGameDataDateTime(int nLevel, std::string sTime){
 		if(nLevel < 0 || nLevel > (int)Level::LEVEL_HARD) return;

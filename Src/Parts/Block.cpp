@@ -1,41 +1,33 @@
 #include "Block.h"
 
-Block::Block(int nX, int nY, int nSpeed, int nHeight, int nWidth, int nHandle, Animation*& pAnime)
+Block::Block(int nX, int nY, int nSpeed, int nPos, int nHandle, Animation*& pAnime, const int& nIndex)
 {
 	m_pStatusSet = new StructStatus();
 	m_pStatusSet->m_nBlockX = nX;
 	m_pStatusSet->m_nBlockY = nY;
-	m_pStatusSet->m_nBlockSpeed = nSpeed;
-	m_pStatusSet->m_nBlockHeight = nHeight;
-	m_pStatusSet->m_nBlockWidth = nWidth;
-	m_pStatusSet->m_nBlockGraphHandle = nHandle;
+	m_pStatusSet->m_nPos = nPos;
+	m_pStatusSet->m_nHandle = nHandle;
+	m_pStatusSet->m_nIndex = nIndex;
 
+	m_pStatusSet->m_nSpeed = nSpeed;
 	m_pAnime = pAnime;
 }
 
 Block::~Block()
 {
-	delete m_pStatusSet;
+	DeletePtr(m_pStatusSet);
 }
 
 void Block::Update(){
 	if(m_pAnime->IsAllStoppedAnimation()) return;
-	m_pStatusSet->m_nBlockY += m_pStatusSet->m_nBlockSpeed;
-	if(m_pStatusSet->m_bBlockCollision) m_pStatusSet->m_nAlphaCount++;
+	m_pStatusSet->m_nBlockY += m_pStatusSet->m_nSpeed;
 }
 
 void Block::DrawLoop(){
-	if(m_pStatusSet->m_nBlockY < 0 || m_pStatusSet->m_nBlockY > WindowMaxY) return;
+	if(m_pStatusSet->m_nBlockY < WindowMinY - 20 || m_pStatusSet->m_nBlockY > WindowMaxY + 20) return;
 
-	int nDrawMinX = GetBlockPositionMinX();
-	int nDrawMinY = GetBlockPositionMinY();
-	int nDrawMaxX = GetBlockPositionMaxX();
-	int nDrawMaxY = GetBlockPositionMaxY();
-	if(m_pStatusSet->m_bBlockCollision){
-		int nCount = m_pStatusSet->m_nAlphaCount % 16;
-		int nAlpha = (nCount < 8 ? 32 * (8 - nCount) : 32 * (nCount - 8));
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, nAlpha);
-	}
-	DrawExtendGraph(nDrawMinX, nDrawMinY, nDrawMaxX, nDrawMaxY, m_pStatusSet->m_nBlockGraphHandle, FALSE);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
+	const int& nX = GetBlockPositionX();
+	const int& nY = GetBlockPositionY();
+	double dAngle = m_pAnime->GetAnimationCount(m_pStatusSet->m_nIndex) / 10;
+	DrawRotaGraph(nX, nY, 0.5, dAngle, m_pStatusSet->m_nHandle, TRUE);
 }

@@ -2,14 +2,14 @@
 
 SceneMgr::SceneMgr() : m_eNextScene(SCENE_UNKNOWN), m_ePhase(PHASE_LOAD)
 {
-	if(m_pResource == nullptr) m_pResource = new Resource();
-	if(m_pScene == nullptr) m_pScene = dynamic_cast<BaseScene*>(new LoadingScene(this, this));
+	m_pResource = new Resource();
+	m_pScene = dynamic_cast<BaseScene*>(new LoadingScene(this, this));
 }
 
 SceneMgr::~SceneMgr()
 {
-	if(m_pResource != nullptr) delete m_pResource;
-	if(m_pScene != nullptr) delete m_pScene;
+	DeletePtr(m_pResource);
+	DeletePtr(m_pScene);
 }
 
 void SceneMgr::Initialize(){
@@ -20,7 +20,7 @@ void SceneMgr::Initialize(){
 void SceneMgr::Update(){
 	if(m_eNextScene != SCENE_UNKNOWN){
 		Finalize();
-		delete m_pScene;
+		DeletePtr(m_pScene);
 
 		switch(m_eNextScene){
 		case SCENE_LOAD:

@@ -2,17 +2,13 @@
 
 MenuScene::MenuScene(ISceneManager* pChanger, IResourceManager* pResource) : BaseScene(pChanger, pResource)
 {
-	for(int i = 0; i < (int)Level::LEVEL_UNKNOWN; i++){
-		if(m_apData[i] == nullptr) m_apData[i] = new StructReplayData();
-	}
-	if(m_pCursor == nullptr) m_pCursor = new StructCursor();
+	for(int i = 0; i < (int)Level::LEVEL_UNKNOWN; i++) m_apData[i] = new StructReplayData();
+	m_pCursor = new StructCursor();
 }
 
 MenuScene::~MenuScene(){
-	for(int i = 0; i < (int)Level::LEVEL_UNKNOWN; i++){
-		if(m_apData[i] != nullptr) delete m_apData[i];
-	}
-	if(m_pCursor != nullptr) delete m_pCursor;
+	for(int i = 0; i < (int)Level::LEVEL_UNKNOWN; i++) DeletePtr(m_apData[i]);
+	DeletePtr(m_pCursor);
 }
 
 /// <summary>
@@ -51,7 +47,6 @@ void MenuScene::UpdateAlphaCount(){
 void MenuScene::UpdateMoveCursorAction(){
 	if(m_bOKKeyPush || m_bCancelKeyPush) return;
 	if(GetPhase() == static_cast<int>(Phase::PHASE_RESULT)) return;
-	if(GetPhase() == static_cast<int>(Phase::PHASE_MANUAL)) return;
 
 	if(!m_bLeftKeyPush && !m_bRightKeyPush && !m_bUpKeyPush && !m_bDownKeyPush) MoveCursorKeyPushCheck();
 	else{
@@ -76,30 +71,28 @@ void MenuScene::MoveCursorKeyPushCheck(){
 		m_bLeftKeyPush = TRUE;
 		m_nAnimeIndex = m_pAnime->SetAnimationCount(m_nMoveCursorCount);
 
-		int nVolume = m_pCursor->m_nConfigBGMCursorPos * 5;
-		SetGameDataVolumeBGM(nVolume);
-		m_pResource->SetSoundsBGMVolume(nVolume);
-
-		nVolume = m_pCursor->m_nConfigSECursorPos * 5;
-		SetGameDataVolumeSE(nVolume);
-		m_pResource->SetSoundsSEVolume(nVolume);
+		SetGameDataVolumeBGM(m_pCursor->m_nConfigBGMCursorPos * 5);
+		m_pResource->SetSoundsBGMVolume(m_pCursor->m_nConfigBGMCursorPos * 5);
+		SetGameDataVolumeSE(m_pCursor->m_nConfigSECursorPos * 5);
+		m_pResource->SetSoundsSEVolume(m_pCursor->m_nConfigSECursorPos * 5);
 	}
 	else if(CheckHitKey(KEY_INPUT_RIGHT)){
 		if(GetPhase() == static_cast<int>(Phase::PHASE_CONFIG) && bConfigExit) return;
 		m_bRightKeyPush = TRUE;
 		m_nAnimeIndex = m_pAnime->SetAnimationCount(m_nMoveCursorCount);
+
 		SetGameDataVolumeBGM(m_pCursor->m_nConfigBGMCursorPos * 5);
+		m_pResource->SetSoundsBGMVolume(m_pCursor->m_nConfigBGMCursorPos * 5);
 		SetGameDataVolumeSE(m_pCursor->m_nConfigSECursorPos * 5);
+		m_pResource->SetSoundsSEVolume(m_pCursor->m_nConfigSECursorPos * 5);
 	}
 	else if(CheckHitKey(KEY_INPUT_UP)){
-		if(GetPhase() == static_cast<int>(Phase::PHASE_TITLE)) return;
-		if(GetPhase() == static_cast<int>(Phase::PHASE_LEVEL)) return;
+		if(GetPhase() != static_cast<int>(Phase::PHASE_CONFIG)) return;
 		m_bUpKeyPush = TRUE;
 		m_nAnimeIndex = m_pAnime->SetAnimationCount(m_nMoveCursorCount);
 	}
 	else if(CheckHitKey(KEY_INPUT_DOWN)){
-		if(GetPhase() == static_cast<int>(Phase::PHASE_TITLE)) return;
-		if(GetPhase() == static_cast<int>(Phase::PHASE_LEVEL)) return;
+		if(GetPhase() != static_cast<int>(Phase::PHASE_CONFIG)) return;
 		m_bDownKeyPush = TRUE;
 		m_nAnimeIndex = m_pAnime->SetAnimationCount(m_nMoveCursorCount);
 	}
@@ -137,8 +130,10 @@ int& MenuScene::GetCursorPos(){
 		return m_pCursor->m_nMainCursorPos;
 	case static_cast<int>(Phase::PHASE_LEVEL):
 		return m_pCursor->m_nLevelCursorPos;
-	default:
+	case static_cast<int>(Phase::PHASE_CONFIG):
 		return m_pCursor->m_nConfigCursorPos;
+	default:
+		return m_pCursor->m_nManualCursorPos;
 	}
 }
 
@@ -148,8 +143,10 @@ const int& MenuScene::GetCursorMaxPos(){
 		return m_pCursor->m_nMainCursorMaxPos;
 	case static_cast<int>(Phase::PHASE_LEVEL):
 		return m_pCursor->m_nLevelCursorMaxPos;
-	default:
+	case static_cast<int>(Phase::PHASE_CONFIG):
 		return m_pCursor->m_nConfigCursorMaxPos;
+	default:
+		return m_pCursor->m_nManualCursorMaxPos;
 	}
 }
 
@@ -479,14 +476,14 @@ void MenuScene::DrawPhaseConfig(){
 	//音量ゲージ
 	nHandle = GetGraphicsHandle(ResourceImage::IMAGE_LOAD_GAUGE_EMPTY);
 	DrawExtendGraph(nGaugeMinX, nBaseY - 10, nGaugeMaxX, nBaseY + 10, nHandle, TRUE);
-	DrawExtendGraph(nGaugeMinX, nBaseY + 30, nGaugeMaxX, nBaseY + 50, nHandle, TRUE);
+	DrawExtendGraph(nGaugeMinX, nBaseY + 20, nGaugeMaxX, nBaseY + 40, nHandle, TRUE);
 	nHandle = GetGraphicsHandle(ResourceImage::IMAGE_LOAD_GAUGE_FILL);
 	DrawExtendGraph(nGaugeMinX, nBaseY - 10, nBGMGaugeX, nBaseY + 10, nHandle, TRUE);
-	DrawExtendGraph(nGaugeMinX, nBaseY + 30, nSEGaugeX, nBaseY + 50, nHandle, TRUE);
+	DrawExtendGraph(nGaugeMinX, nBaseY + 20, nSEGaugeX, nBaseY + 40, nHandle, TRUE);
 
 	//音量％表示
-	DrawFormatString(nGaugeMaxX + 20, nBaseY, nColor, "%.2f%%", fBGMPercent * 100);
-	DrawFormatString(nGaugeMaxX + 20, nBaseY + 40, nColor, "%.2f%%", fSEPercent * 100);
+	DrawFormatString(nGaugeMaxX + 20, nBaseY - 10, nColor, "%.2f%%", fBGMPercent * 100);
+	DrawFormatString(nGaugeMaxX + 20, nBaseY + 25, nColor, "%.2f%%", fSEPercent * 100);
 
 	//説明書き
 	nHandle = GetGraphicsHandle(ResourceImage::IMAGE_TITLE_CONFIG_DISPLAY_DESCRIPTION);
@@ -494,7 +491,18 @@ void MenuScene::DrawPhaseConfig(){
 }
 
 void MenuScene::DrawPhaseManual(){
+	int nPage = m_pCursor->m_nManualCursorPos + static_cast<int>(ResourceImage::IMAGE_TITLE_MANUAL_PAGE1);
+	int nHandle = GetGraphicsHandle(static_cast<ResourceImage>(nPage));
+	DrawExtendGraph(WindowMinX + 50, WindowMinY + 50, WindowMaxX - 50, WindowCenY + 50, nHandle, TRUE);
 
+	//ページ数表示
+	int nY = static_cast<int>(WindowCenY * 1.65);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 192);
+	DrawFormatString(WindowCenX - 30, nY - 80, GetColor(255, 255, 255), "%d / %d", m_pCursor->m_nManualCursorPos + 1, m_pCursor->m_nManualCursorMaxPos);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	//説明書き
+	nHandle = GetGraphicsHandle(ResourceImage::IMAGE_TITLE_MANUAL_DESPLAY_DESCRIPTION);
+	DrawRotaGraph(WindowCenX, nY, 1, 0, nHandle, TRUE);
 }
 
 /// <summary>

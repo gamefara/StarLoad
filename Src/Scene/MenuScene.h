@@ -39,6 +39,14 @@ private:
 		CURSOR_CONFIG_SE_COUNT = 20,
 	};
 
+	enum ManualCursor{
+		CURSOR_MANUAL_PAGE1,
+		CURSOR_MANUAL_PAGE2,
+		CURSOR_MANUAL_PAGE3,
+		CURSOR_MANUAL_PAGE4,
+		CURSOR_MANUAL_COUNT
+	};
+
 	struct StructReplayData{
 		std::string m_sDateTime;
 		int m_nScore;
@@ -51,11 +59,13 @@ private:
 		int m_nConfigCursorPos = 0;
 		int m_nConfigBGMCursorPos = 12;		//コンフィグファイルから読み取って値変更する
 		int m_nConfigSECursorPos = 8;
-		const int m_nMainCursorMaxPos = (int)MenuCursor::CURSOR_MENU_COUNT;
-		const int m_nLevelCursorMaxPos = (int)LevelCursor::CURSOR_LEVEL_COUNT;
-		const int m_nConfigCursorMaxPos = (int)ConfigCursor::CURSOR_CONFIG_COUNT;
-		const int m_nConfigBGMCursorMaxPos = (int)ConfigCursor::CURSOR_CONFIG_BGM_COUNT;
-		const int m_nConfigSECursorMaxPos = (int)ConfigCursor::CURSOR_CONFIG_SE_COUNT;
+		int m_nManualCursorPos = 0;
+		const int m_nMainCursorMaxPos = static_cast<int>(MenuCursor::CURSOR_MENU_COUNT);
+		const int m_nLevelCursorMaxPos = static_cast<int>(LevelCursor::CURSOR_LEVEL_COUNT);
+		const int m_nConfigCursorMaxPos = static_cast<int>(ConfigCursor::CURSOR_CONFIG_COUNT);
+		const int m_nConfigBGMCursorMaxPos = static_cast<int>(ConfigCursor::CURSOR_CONFIG_BGM_COUNT);
+		const int m_nConfigSECursorMaxPos = static_cast<int>(ConfigCursor::CURSOR_CONFIG_SE_COUNT);
+		const int m_nManualCursorMaxPos = static_cast<int>(ManualCursor::CURSOR_MANUAL_COUNT);
 	};
 
 	int m_nBackGroundHandle = m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_BACKGROUND);

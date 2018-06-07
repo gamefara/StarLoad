@@ -11,8 +11,8 @@ BaseScene::BaseScene(ISceneManager* pChanger, IResourceManager* pResource)
 
 BaseScene::~BaseScene()
 {
-	if(m_pKey != nullptr) delete m_pKey;
-	if(m_pAnime != nullptr) delete m_pAnime;
+	DeletePtr(m_pKey);
+	DeletePtr(m_pAnime);
 }
 
 void BaseScene::Initialize(){
