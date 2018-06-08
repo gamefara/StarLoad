@@ -147,7 +147,7 @@ void PracticeScene::UpdateGamePlayProcess(){
 	const int& nRate = m_pStageSet->m_anRankingRate[nIndex];
 	if(nScore >= nRate){
 		nIndex++;
-		nAddRate += 100;
+		nAddRate *= 2;
 		UpdateRank(m_pStageSet->m_sGameRank);
 		UpdateRank(m_pStageSet->m_sGameHiRank);
 	}
@@ -232,26 +232,30 @@ void PracticeScene::DeleteBlocks(){
 }
 
 void PracticeScene::UpdatePlayers(){
-	for(int i = 0; i < m_pPlayerSet->m_nBarCount; i++){
-		if(m_apPlayer.at(i) == nullptr) continue;
-		m_apPlayer.at(i)->Update();
-
-		if(m_apPlayer.at(i)->GetCollision()) continue;
-		m_apPlayer.at(i)->SetFlash(m_pPlayerSet->m_nBarIndex);
-	}
 	UpdateBarMovePlayers();
-	UpdateCollisionPlayers();
+
+	int nIndex = m_pPlayerSet->m_nBarIndex;
+	for(int i = 0; i < m_pPlayerSet->m_nBarCount; i++){
+		int j = (i <= nIndex ? nIndex - i : i);
+		if(m_apPlayer.at(j) == nullptr) continue;
+		m_apPlayer.at(j)->Update();
+
+		int& nRefIndex = m_pPlayerSet->m_nBarIndex;
+		if(nRefIndex == Invalid) continue;
+
+		if(m_apPlayer.at(j)->GetCollision()) continue;
+		m_apPlayer.at(j)->SetFlash(nRefIndex);
+		UpdateCollisionPlayers();
+	}
 }
 
 void PracticeScene::UpdateCollisionPlayers(){
-	const int& nIndex = m_pPlayerSet->m_nBarIndex;
-	if(nIndex == Invalid) return;
-
-	const int& nPlayerX = m_apPlayer.at(nIndex)->GetPlayerPositionX();
-	const int& nPlayerY = m_apPlayer.at(nIndex)->GetPlayerPositionY();
+	int& nIndex = m_pPlayerSet->m_nBarIndex;
 	for(int i = 0; i < m_pBlockSet->m_nBlockCount; i++){
 		//ブロックカラーによって処理変更
 		if(m_apBlock.at(i) == nullptr || m_apBlock.at(i)->GetCollision()) continue;
+		const int& nPlayerX = m_apPlayer.at(nIndex)->GetPlayerPositionX();
+		const int& nPlayerY = m_apPlayer.at(nIndex)->GetPlayerPositionY();
 		const int& nBlockX = m_apBlock.at(i)->GetBlockPositionX();
 		const int& nBlockY = m_apBlock.at(i)->GetBlockPositionY();
 		if(nBlockY < nPlayerY) continue;
@@ -268,27 +272,32 @@ void PracticeScene::UpdateCollisionPlayers(){
 			//赤
 			if(nPlayerX != nBlockX) continue;
 			m_apPlayer.at(nIndex)->SetCollision();
-			UpdateCollisionMovePlayers(nIndex);
+			UpdateCollisionMovePlayers();
+			return;
 		}
 		//白
-		else ReverseAllCollision();
+		else{
+			ReverseAllCollision();
+			return;
+		}
 		//緑はない
 	}
 }
 
-void PracticeScene::UpdateCollisionMovePlayers(const int& nIndex){
+void PracticeScene::UpdateCollisionMovePlayers(){
 	//衝突後場所変更(左側チェック→移動先無ければ右側チェック)
+	int& nIndex = m_pPlayerSet->m_nBarIndex;
 	for(int i = nIndex - 1; i >= 0; i--){
 		if(m_apPlayer.at(i) == nullptr || m_apPlayer.at(i)->GetCollision()) continue;
-		m_pPlayerSet->m_nBarIndex = i;
+		nIndex = i;
 		return;
 	}
 	for(int i = nIndex + 1; i < m_pPlayerSet->m_nBarCount; i++){
 		if(m_apPlayer.at(i) == nullptr || m_apPlayer.at(i)->GetCollision()) continue;
-		m_pPlayerSet->m_nBarIndex = i;
+		nIndex = i;
 		return;
 	}
-	m_pPlayerSet->m_nBarIndex = Invalid;
+	nIndex = Invalid;
 }
 
 void PracticeScene::UpdateBarMovePlayers(){

@@ -68,30 +68,35 @@ private:
 		const int m_nManualCursorMaxPos = static_cast<int>(ManualCursor::CURSOR_MANUAL_COUNT);
 	};
 
-	int m_nBackGroundHandle = m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_BACKGROUND);
+	struct StructPushKey{
+		int m_bLeftKeyPush = FALSE;
+		int m_bRightKeyPush = FALSE;
+		int m_bUpKeyPush = FALSE;
+		int m_bDownKeyPush = FALSE;
+		int m_bOKKeyPush = FALSE;
+		int m_bCancelKeyPush = FALSE;
+	};
 
-	StructReplayData* m_apData[static_cast<int>(Level::LEVEL_UNKNOWN)];
-	StructCursor* m_pCursor;
+	struct StructIndex{
+		int m_nAnimeIndex = Invalid;
+		int m_nAnimeLoopIndex = Invalid;
+	};
 
-	//メニュー画面
-	int m_bLeftKeyPush = FALSE;
-	int m_bRightKeyPush = FALSE;
-	int m_bUpKeyPush = FALSE;
-	int m_bDownKeyPush = FALSE;
-	int m_bOKKeyPush = FALSE;
-	int m_bCancelKeyPush = FALSE;
-	int m_nAnimeIndex = Invalid;
-	int m_nAnimeLoopIndex = Invalid;
+	struct StructCount{
+		const int m_nMoveCursorCount = 15;		//カーソル移動時間
+		const int m_nMovePhaseCount = 30;		//フェーズ移動時間
+		const int m_nLoopAlphaMaxCount = 30;	//α値ループに必要な時間
+		int m_nLoopAlphaNowCount = 0;				//α値ループ現在時間
+	};
 
+	StructReplayData* m_apDataSet[static_cast<int>(Level::LEVEL_UNKNOWN)];
+	StructCursor* m_pCursorSet;
+	StructPushKey* m_pPushSet;
+	StructIndex* m_pIndexSet;
+	StructCount* m_pCountSet;
+
+	int m_nBackGroundHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_BACKGROUND);
 	float m_nDrawMenuNowAngle = 0.0f;
-
-	//カーソル移動時間
-	const int m_nMoveCursorCount = 15;
-	//フェーズ移動時間
-	const int m_nMovePhaseCount = 30;
-	//α値ループ時間
-	const int m_nLoopAlphaMaxCount = 30;
-	int m_nLoopAlphaNowCount = 0;
 
 	void UpdateAlphaCount();
 	void UpdateMoveCursorAction();

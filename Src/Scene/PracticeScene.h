@@ -50,8 +50,8 @@ private:
 		const int m_nGameMaxCount = 10800;												//ステージ終了までの時間
 		std::string m_sGameRank = "D";													//ゲームランク
 		std::string m_sGameHiRank = "";													//ゲームハイスコア時のランク
-		const int m_anRankingRate[4] = { 100000, 300000, 600000, 1000000 };	//ランク上げ数値一覧
-		int m_nAddRate = 100;																//1F毎に増えるスコア値
+		const int m_anRankingRate[4] = { 50000, 200000, 600000, 1200000 };	//ランク上げ数値一覧
+		int m_nAddRate = 57;																	//1F毎に増えるスコア値
 		int m_nRateIndex = 0;																//ランク上げ要素番号
 		const int m_nRateMaxIndex = 4;													//ランク上げ要素最大番号
 	};
@@ -92,7 +92,7 @@ private:
 	void DeleteBlocks();
 	void UpdatePlayers();
 	void UpdateCollisionPlayers();
-	void UpdateCollisionMovePlayers(const int& nIndex);
+	void UpdateCollisionMovePlayers();
 	void UpdateBarMovePlayers();
 	void ReverseAllCollision();
 	void DrawLoopBlocks();
