@@ -18,11 +18,18 @@ Block::~Block()
 	DeletePtr(m_pStatusSet);
 }
 
+/// <summary>
+/// XVˆ—
+/// </summary>
 void Block::Update(){
 	if(m_pAnime->IsAllStoppedAnimation()) return;
 	m_pStatusSet->m_nBlockY += m_pStatusSet->m_nSpeed;
 }
 
+/// <summary>
+/// •`‰æˆ—
+/// </summary>
+/// <returns>TRUE</returns>
 void Block::DrawLoop(){
 	if(m_pStatusSet->m_nBlockY < WindowMinY - 20 || m_pStatusSet->m_nBlockY > WindowMaxY + 20) return;
 

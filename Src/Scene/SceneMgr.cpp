@@ -12,11 +12,17 @@ SceneMgr::~SceneMgr()
 	DeletePtr(m_pScene);
 }
 
+/// <summary>
+/// ‰Šú‰»ˆ—
+/// </summary>
 void SceneMgr::Initialize(){
 	m_pScene->BaseScene::Initialize();
 	m_pScene->Initialize();
 }
 
+/// <summary>
+/// XVˆ—
+/// </summary>
 void SceneMgr::Update(){
 	if(m_eNextScene != SCENE_UNKNOWN){
 		Finalize();
@@ -41,11 +47,17 @@ void SceneMgr::Update(){
 	m_pScene->Update();
 }
 
+/// <summary>
+/// •`‰æˆ—
+/// </summary>
 void SceneMgr::DrawLoop(){
 	m_pScene->BaseScene::DrawLoop();
 	m_pScene->DrawLoop();
 }
 
+/// <summary>
+/// I—¹ˆ—
+/// </summary>
 void SceneMgr::Finalize(){
 	m_pScene->BaseScene::Finalize();
 	m_pScene->Finalize();

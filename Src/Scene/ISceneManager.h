@@ -15,10 +15,11 @@ enum Phase{
 	PHASE_RESULT,		//リザルト
 	PHASE_CONFIG,		//コンフィグ選択
 	PHASE_MANUAL,		//マニュアル
+	PHASE_CREDIT,		//クレジット
 	PHASE_EXIT,			//ゲーム終了
 	PHASE_GAMEPLAY,	//ゲーム開始
 
-	PHASE_UNKNOWN
+	PHASE_COUNT
 };
 
 enum Level{
@@ -26,13 +27,12 @@ enum Level{
 	LEVEL_STANDARD,	//難易度中
 	LEVEL_HARD,			//難易度高
 
-	LEVEL_UNKNOWN
+	LEVEL_COUNT
 };
 
 class ISceneManager
 {
 public:
-	ISceneManager();
 	virtual ~ISceneManager() = 0;
 	virtual void ChangeScene(Scene eScene) = 0;	//指定シーンに変更する
 	virtual void SetPhase(Phase ePhase) = 0;	//指定フェーズに変更する

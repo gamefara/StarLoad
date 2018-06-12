@@ -19,6 +19,9 @@ Player::~Player()
 	DeletePtr(m_pStatusSet);
 }
 
+/// <summary>
+/// XVˆ—
+/// </summary>
 void Player::Update(){
 	if(m_pStatusSet->m_bCollision){
 		if(m_pStatusSet->m_nAlphaCount >= 100) return;
@@ -32,6 +35,9 @@ void Player::Update(){
 	}
 }
 
+/// <summary>
+/// •`‰æˆ—
+/// </summary>
 void Player::DrawLoop(){
 	const int& nCenX = GetPlayerPositionX();
 	const int& nCenY = GetPlayerPositionY();

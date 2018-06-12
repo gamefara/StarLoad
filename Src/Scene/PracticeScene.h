@@ -38,27 +38,26 @@ private:
 		int m_bGameOver = FALSE;	//ゲームオーバーフラグ
 		int m_bContinue = FALSE;	//コンティニューフラグ
 		int m_bFadeout = FALSE;		//フェードアウトフラグ
-		int m_bReserve = TRUE;		//結果保存フラグ
+		int m_bClearMusic = TRUE;	//クリア時SEフラグ
 	};
 
 	struct StructStage{
 		const int m_nStandMaxCount = 300;												//ゲーム待機時間
 		const int m_nFinishStageCount = 60;												//ゲーム終了までの時間
-		const int m_nFadeoutMaxCount = 180;												//フェードアウト時間
+		const int m_nFadeoutMaxCount = 20;												//フェードアウト時間
 		int m_nGameScore = 0;																//ゲームスコア
 		int m_nGameHiScore = 0;																//ゲームハイスコア
-		const int m_nGameMaxCount = 10800;												//ステージ終了までの時間
+		const int m_nGameMaxCount = 114 * 60;											//ステージ終了までの時間
 		std::string m_sGameRank = "D";													//ゲームランク
 		std::string m_sGameHiRank = "";													//ゲームハイスコア時のランク
-		const int m_anRankingRate[4] = { 50000, 200000, 600000, 1200000 };	//ランク上げ数値一覧
+		const int m_anRankingRate[4] = { 50000, 250000, 750000, 1500000 };	//ランク上げ数値一覧
 		int m_nAddRate = 57;																	//1F毎に増えるスコア値
 		int m_nRateIndex = 0;																//ランク上げ要素番号
 		const int m_nRateMaxIndex = 4;													//ランク上げ要素最大番号
 	};
 
 	struct StructBlock{
-		const int m_nBlockCount = 32;	//石を表示する個数
-		const int m_nInterval = 60;	//石作成カウンタ
+		const int m_nBlockCount = 64;	//石を表示する個数
 	};
 
 	struct StructPlayer{
@@ -97,10 +96,20 @@ private:
 	void ReverseAllCollision();
 	void DrawLoopBlocks();
 	void DrawLoopPlayers();
-	int GetDrawMagicHandle();
 	void FinalizeBlocks();
 	void FinalizePlayers();
 
-	int IsProcess(const int& nKey){ return m_pKey->IsKeyPush(nKey); }
+	/// <summary>
+	/// 指定キーを押したかどうかチェックします。
+	/// </summary>
+	/// <param name="nKey">指定キー</param>
+	/// <returns>押したかどうか</returns>
+	int IsPushProcess(const int& nKey){ return m_pKey->IsKeyPush(nKey); }
+
+	/// <summary>
+	/// 指定キーが15フレーム押しているかチェックします。
+	/// </summary>
+	/// <param name="nKey">指定キー</param>
+	/// <returns>指定フレーム経過したかどうか</returns>
 	int IsFixedProcess(const int& nKey){ return m_pKey->IsKeyFixedPush(nKey, 15); }
 };

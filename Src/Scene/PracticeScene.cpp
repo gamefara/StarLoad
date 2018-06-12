@@ -26,30 +26,40 @@ void PracticeScene::Initialize(){
 	InitializePlayer();
 }
 
+/// <summary>
+/// ゲーム情報を設定します。
+/// </summary>
 void PracticeScene::InitializeSceneStatus(){
-	m_pStageSet->m_nGameHiScore = GetGameDataScore(GetLevel());
-	m_pStageSet->m_sGameHiRank = GetGameDataRank(GetLevel());
-	m_nSoundHandle = m_pResource->GetSoundsHandle(ResourceSound::SOUND_BGM_STAGE);
-	m_apPlayer.clear();
+	const int& nLevel = GetLevel();
+	m_pStageSet->m_nGameHiScore = GetGameDataScore(nLevel);
+	m_pStageSet->m_sGameHiRank = GetGameDataRank(nLevel);
+	m_nSoundHandle = GetSoundsHandle(SOUND_BGM_STAGE);
 }
 
+/// <summary>
+/// ブロック初期化処理をします。
+/// </summary>
 void PracticeScene::InitializeBlocks(){
 	m_pIndexSet->m_nAnimeIndex = m_pAnime->SetAnimationDelayCount(m_pStageSet->m_nGameMaxCount, m_pStageSet->m_nStandMaxCount);
 	m_apBlock.resize(m_pBlockSet->m_nBlockCount);
 }
 
+/// <summary>
+/// プレイヤー初期化処理をします。
+/// </summary>
 void PracticeScene::InitializePlayer(){
 	const int& nWidth = m_pPlayerSet->m_nWidth;
-	const int& nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_GREEN);
+	const int& nHandle = GetGraphicsHandle(IMAGE_PRACTICE_STAR_GREEN);
 	const int& nMaxIndex = m_pPlayerSet->m_nBarCount;
-	const int& nWhiteHandle = m_pResource->GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_WHITE);
+	const int& nWhiteHandle = GetGraphicsHandle(IMAGE_PRACTICE_STAR_WHITE);
 	const int nDiffIndex = nMaxIndex / 2;
 
+	m_apPlayer.clear();
 	m_apPlayer.resize(nMaxIndex);
 	for(int i = (-1) * nDiffIndex; i < nMaxIndex - nDiffIndex; i++){
-		const int& nX = WindowCenX + i * nWidth;
+		const int nX = WindowCenX + i * nWidth;
 		const int& nY = m_pPlayerSet->m_nFieldY;
-		const int& nIndex = i + nDiffIndex;
+		const int nIndex = i + nDiffIndex;
 		const int& nAnimeIndex = m_pIndexSet->m_nAnimeIndex;
 		m_apPlayer.at(nIndex) = new Player(nX, nY, nHandle, nWhiteHandle, nIndex, m_pAnime, nAnimeIndex);
 	}
@@ -60,7 +70,7 @@ void PracticeScene::InitializePlayer(){
 }
 
 /// <summary>
-/// 毎フレーム更新処理
+/// 更新処理
 /// </summary>
 /// <returns>TRUE</returns>
 void PracticeScene::Update(){
@@ -72,50 +82,73 @@ void PracticeScene::Update(){
 	else UpdateGamePlayProcess();
 }
 
+/// <summary>
+/// ステージクリア時の処理をします。
+/// </summary>
 void PracticeScene::UpdateStageClearProcess(){
 	if(!m_pAnime->IsFinishedAnimationCount(m_pIndexSet->m_nFinishStageIndex)){
 		//BGMフェードアウト
-		int nVolumeBGM = static_cast<int>((255.0f / 100.0f) * GetGameDataVolumeBGM());
-		int nVolume = m_pAnime->GetAnimationSmooth(m_pIndexSet->m_nFinishStageIndex, nVolumeBGM, 0);
-		if(CheckSoundMem(m_nSoundHandle)) ChangeVolumeSoundMem(nVolume, m_nSoundHandle);
-		int nVolumeSE = static_cast<int>((255.0f / 100.0f) * GetGameDataVolumeSE());
+		const int nVolume = m_pAnime->GetAnimationSmooth(m_pIndexSet->m_nFinishStageIndex, GetGameDataVolumeBGM(), 0);
+		m_pResource->SetSoundsBGMVolume(nVolume);
+
 		UpdateBlocks();
 		return;
 	}
+	else if(m_pFlagSet->m_bClearMusic){
+		m_pFlagSet->m_bClearMusic = FALSE;
+		const int& nHandle = GetSoundsHandle(SOUND_SE_CLEAR);
+		int nVolume = static_cast<int>((255.0f / 100.0f) * GetGameDataVolumeSE());
+		ChangeVolumeSoundMem(nVolume, nHandle);
+		PlaySoundMem(nHandle, DX_PLAYTYPE_BACK);
+	}
+	if(m_pFlagSet->m_bFadeout) UpdateFadeOutProcess();
+
 	if(CheckSoundMem(m_nSoundHandle)) StopSoundMem(m_nSoundHandle);
-	if(IsFixedProcess(KEY_INPUT_LEFT) || IsFixedProcess(KEY_INPUT_RIGHT)) ReverseFlag(m_pFlagSet->m_bReserve);
-	if(IsProcess(KEY_INPUT_Z)){
+	if(IsFixedProcess(KEY_INPUT_LEFT) || IsFixedProcess(KEY_INPUT_RIGHT)){
+		ReverseFlag(m_pFlagSet->m_bContinue);
+		PlaySoundMem(GetSoundsHandle(SOUND_SE_CURSOR_MOVE), DX_PLAYTYPE_BACK);
+	}
+	if(IsPushProcess(KEY_INPUT_Z)){
 		m_pIndexSet->m_nAnimeIndex = m_pAnime->SetAnimationCount(m_pStageSet->m_nFadeoutMaxCount);
-		m_pFlagSet->m_bStageClear = FALSE;
 		m_pFlagSet->m_bFadeout = TRUE;
+		PlaySoundMem(GetSoundsHandle(SOUND_SE_TITLE_OK), DX_PLAYTYPE_BACK);
 	}
 }
 
+/// <summary>
+/// ゲームオーバー時の処理をします。
+/// </summary>
 void PracticeScene::UpdateGameOverProcess(){
 	if(!m_pAnime->IsFinishedAnimationCount(m_pIndexSet->m_nFinishStageIndex)){
 		//BGMフェードアウト
-		int nVolumeBGM = static_cast<int>((255.0f / 100.0f) * GetGameDataVolumeBGM());
-		int nVolume = m_pAnime->GetAnimationSmooth(m_pIndexSet->m_nFinishStageIndex, nVolumeBGM, 0);
-		if(CheckSoundMem(m_nSoundHandle)) ChangeVolumeSoundMem(nVolume, m_nSoundHandle);
-		int nVolumeSE = static_cast<int>((255.0f / 100.0f) * GetGameDataVolumeSE());
+		const int nVolume = m_pAnime->GetAnimationSmooth(m_pIndexSet->m_nFinishStageIndex, GetGameDataVolumeBGM(), 0);
+		m_pResource->SetSoundsBGMVolume(nVolume);
 
 		UpdateBlocks();
 		return;
 	}
-	else if(m_pFlagSet->m_bFadeout) UpdateFadeOutProcess();
+	if(m_pFlagSet->m_bFadeout) UpdateFadeOutProcess();
 
 	if(CheckSoundMem(m_nSoundHandle)) StopSoundMem(m_nSoundHandle);
-	if(IsFixedProcess(KEY_INPUT_LEFT) || IsFixedProcess(KEY_INPUT_RIGHT)) ReverseFlag(m_pFlagSet->m_bContinue);
-	if(IsProcess(KEY_INPUT_Z)){
+	if(IsFixedProcess(KEY_INPUT_LEFT) || IsFixedProcess(KEY_INPUT_RIGHT)){
+		ReverseFlag(m_pFlagSet->m_bContinue);
+		PlaySoundMem(GetSoundsHandle(SOUND_SE_CURSOR_MOVE), DX_PLAYTYPE_BACK);
+	}
+	if(IsPushProcess(KEY_INPUT_Z)){
 		m_pIndexSet->m_nAnimeIndex = m_pAnime->SetAnimationCount(m_pStageSet->m_nFadeoutMaxCount);
-		m_pAnime->RestartAnimation(m_pIndexSet->m_nAnimeIndex);
 		m_pFlagSet->m_bFadeout = TRUE;
+		PlaySoundMem(GetSoundsHandle(SOUND_SE_TITLE_OK), DX_PLAYTYPE_BACK);
 	}
 }
 
+/// <summary>
+/// フェードアウト処理をします。
+/// </summary>
 void PracticeScene::UpdateFadeOutProcess(){
-	if(!m_pAnime->IsFinishedAnimationDelayCount(m_pIndexSet->m_nAnimeIndex)) return;
+	if(!m_pAnime->IsFinishedAnimationCount(m_pIndexSet->m_nAnimeIndex)) return;
 
+	m_pResource->AllSoundsStopBGMVolume();
+	m_pResource->AllSoundsStopSEVolume();
 	//ハイスコア
 	if(m_pStageSet->m_nGameScore > m_pStageSet->m_nGameHiScore){
 		SetGameDataDateTime(GetLevel(), GetNowDateTime());
@@ -131,10 +164,26 @@ void PracticeScene::UpdateFadeOutProcess(){
 	}
 }
 
+/// <summary>
+/// ゲーム中の処理をします。
+/// </summary>
 void PracticeScene::UpdateGamePlayProcess(){
+	//ゲームオーバー時
+	if(!m_pFlagSet->m_bStageClear && m_pPlayerSet->m_nBarIndex == Invalid){
+		if(m_pFlagSet->m_bGameOver) return;
+		m_pFlagSet->m_bGameOver = TRUE;
+		m_pIndexSet->m_nFinishStageIndex = m_pAnime->SetAnimationCount(m_pStageSet->m_nFinishStageCount);
+		PlaySoundMem(GetSoundsHandle(SOUND_SE_PLAYER_BLOCK_COLLISION), DX_PLAYTYPE_BACK);
+	}
+	//ゲームクリア時
+	else if(!m_pFlagSet->m_bGameOver && m_pAnime->IsFinishedAnimationCount(m_pIndexSet->m_nAnimeIndex)){
+		if(m_pFlagSet->m_bStageClear) return;
+		m_pFlagSet->m_bStageClear = TRUE;
+		m_pPlayerSet->m_nBarIndex = Invalid;
+		m_pIndexSet->m_nFinishStageIndex = m_pAnime->SetAnimationCount(m_pStageSet->m_nFinishStageCount);
+	}
+	if(!CheckSoundMem(m_nSoundHandle)) PlaySoundMem(m_nSoundHandle, DX_PLAYTYPE_LOOP, TRUE);
 	UpdateBlocks();
-	if(m_pAnime->IsFinishedAnimationCount(m_pIndexSet->m_nAnimeIndex)) m_pFlagSet->m_bStageClear = FALSE;
-	if(CheckSoundMem(m_nSoundHandle) != Invalid && !CheckSoundMem(m_nSoundHandle)) PlaySoundMem(m_nSoundHandle, DX_PLAYTYPE_BACK, TRUE);
 
 	//スコア
 	int& nScore = m_pStageSet->m_nGameScore;
@@ -153,6 +202,10 @@ void PracticeScene::UpdateGamePlayProcess(){
 	}
 }
 
+/// <summary>
+/// ランクを上げる処理をします。
+/// </summary>
+/// <param name="sRank">現在のランク</param>
 void PracticeScene::UpdateRank(std::string& sRank){
 	if(sRank == "D") sRank = "C";
 	else if(sRank == "C") sRank = "B";
@@ -160,70 +213,92 @@ void PracticeScene::UpdateRank(std::string& sRank){
 	else if(sRank == "A") sRank = "S";
 }
 
+/// <summary>
+/// ブロック更新処理をします。
+/// </summary>
 void PracticeScene::UpdateBlocks(){
 	DeleteBlocks();
 	CreateBlocks();
 	for(int i = 0; i < m_pBlockSet->m_nBlockCount; i++){
 		if(m_apBlock.at(i) == nullptr) continue;
 		m_apBlock.at(i)->Update();
-		int nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_GREEN);
+		int nHandle = GetGraphicsHandle(IMAGE_PRACTICE_STAR_GREEN);
 		if(m_apBlock.at(i)->GetBlockPositionY() < WindowCenY) continue;
 		if(m_apBlock.at(i)->GetBlockHandle() != nHandle) continue;
 		//緑→黄 or 赤
-		nHandle = GetGraphicsHandle((GetRand(TRUE) == TRUE ? IMAGE_PRACTICE_STAR_YELLOW : IMAGE_PRACTICE_STAR_RED));
+		nHandle = GetGraphicsHandle((GetRand(TRUE) ? IMAGE_PRACTICE_STAR_YELLOW : IMAGE_PRACTICE_STAR_RED));
 		m_apBlock.at(i)->SetBlockHandle(nHandle);
 	}
 }
 
+/// <summary>
+/// ブロック生成処理をします。
+/// </summary>
 void PracticeScene::CreateBlocks(){
-	int bHighLevel = (GetLevel() >= Level::LEVEL_STANDARD);
-	int bHalfCount = (m_pAnime->GetAnimationCount(m_pIndexSet->m_nAnimeIndex) >= m_pStageSet->m_nGameMaxCount / 2);
-	const int nInterval = (bHighLevel || bHalfCount ? 30 : 60);
-	if(m_pAnime->GetAnimationCount(m_pIndexSet->m_nAnimeIndex) % nInterval != 0) return;
-
+	const int bHard = (GetLevel() == static_cast<int>(LEVEL_HARD));
+	const int bHalfCount = (m_pAnime->GetAnimationCount(m_pIndexSet->m_nAnimeIndex) >= m_pStageSet->m_nGameMaxCount / 2);
+	const int nInterval = static_cast<int>((bHard ? 30 : 60) * (bHalfCount ? (2.0f / 3.0f) : 1));
+	const int& nGameCount = m_pAnime->GetAnimationCount(m_pIndexSet->m_nAnimeIndex);
+	if(nGameCount % nInterval != 0 || nGameCount > m_pStageSet->m_nGameMaxCount - 180) return;
+	
 	int nIndex = 0;
-	int& nAnimeIndex = m_pIndexSet->m_nAnimeIndex;
-	const int nMaxRandom = 3;
-	const int nBlock = GetRand(nMaxRandom) + 1;
-	std::vector<int> anX = { 0, 1, 2, 3, 4, 5, 6 };
-	int bYellow = FALSE;
 	while(nIndex < m_pBlockSet->m_nBlockCount){
 		if(m_apBlock.at(nIndex) == nullptr) break;
 		nIndex++;
 	}
+
+	//レベルデザイン
+	const int nBlock = 7;
+	const int nYellowMin = 2 + (1 - GetLevel() / 2);
+	const int nRandom = nYellowMin + GetRand(3 - GetLevel());
+	//nRandomの数だけ黄色星を生成
+	std::vector<int> anTempNum = { 0, 1, 2, 3, 4, 5, 6 };
+	std::vector<int> anYellowPos;
+	anYellowPos.resize(nRandom);
+	for(int i = nRandom - 1; i >= 0; i--){
+		const int nSize = static_cast<int>(anTempNum.size());
+		anYellowPos.at(i) = anTempNum.at(GetRand(nSize - 1));
+
+		auto itrFactor = std::find(anTempNum.begin(), anTempNum.end(), anTempNum.at(i));
+		const int nFindIndex = std::distance(anTempNum.begin(), itrFactor);
+		anTempNum.erase(anTempNum.begin() + nFindIndex);
+	}
+
+	const int& nAnimeIndex = m_pIndexSet->m_nAnimeIndex;
+	int bWhite = FALSE;
+	const int nWhitePatternLine = 3;
 	for(int i = nIndex; i < nIndex + nBlock; i++){
 		if(m_apBlock.at(i) != nullptr) continue;
-		int nNow = 0;
-		while(TRUE){
-			nNow = GetRand(anX.size() - 1);
-			auto itrValue = std::find(anX.begin(), anX.end(), anX.at(nNow));
-			int n = std::distance(anX.begin(), itrValue);
-			if(n != anX.size()) break;
+		const int nBlockIndex = i % nBlock;
+		const int nX = m_pPlayerSet->m_nFieldMinX + static_cast<int>(m_pPlayerSet->m_nWidth * (nBlockIndex + 0.5f));
+		const int nPattern = 99;
+		int nChange = GetRand(nPattern - nWhitePatternLine * bWhite);
+		//黄色指定の場所は黄色に
+		for(int j = 0; j < nRandom; j++){
+			if(anYellowPos.at(j) != nBlockIndex) continue;
+			nChange = nPattern - nWhitePatternLine;	//黄色に
+			break;
 		}
-		int nX = m_pPlayerSet->m_nFieldMinX + static_cast<int>(m_pPlayerSet->m_nWidth * (anX.at(nNow) + 0.5f));
-		anX.erase(remove(anX.begin(), anX.end(), anX.at(nNow)), anX.end());
 
-		const int nChange = GetRand(nMaxRandom * 3);
-		int nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_RED);
-
-		//赤を多めに
-		if(nChange == nMaxRandom){
-			if(nBlock == 1) nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_WHITE);
-			else nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_GREEN);
+		int nHandle = Invalid;
+		//白は2つ以上まとめて落ちない
+		if(nChange > nPattern - nWhitePatternLine){
+			nHandle = GetGraphicsHandle(IMAGE_PRACTICE_STAR_WHITE);
+			bWhite = TRUE;
 		}
-		else if(nChange >= nMaxRandom / 3 * 2){
-			if(!bYellow) nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_YELLOW);
-			else nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_RED);
-			bYellow = TRUE;
-		}
-		else if(nChange >= nMaxRandom) nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_GREEN);
-		else nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_RED);
+		else if(nChange >= nPattern / 3 * 2) nHandle = GetGraphicsHandle(IMAGE_PRACTICE_STAR_YELLOW);
+		else if(nChange >= nPattern / 3) nHandle = GetGraphicsHandle(IMAGE_PRACTICE_STAR_GREEN);
+		else nHandle = GetGraphicsHandle(IMAGE_PRACTICE_STAR_RED);
 
-		m_apBlock.at(i) = new Block(nX, -20, GetLevel() + 3, nNow, nHandle, m_pAnime, nAnimeIndex);
+		m_apBlock.at(i) = new Block(nX, -20, GetLevel() + 3, nBlockIndex, nHandle, m_pAnime, nAnimeIndex);
 	}
 }
 
+/// <summary>
+/// ブロック削除処理をします。
+/// </summary>
 void PracticeScene::DeleteBlocks(){
+	//削除チェック
 	for(int i = 0; i < m_pBlockSet->m_nBlockCount; i++){
 		if(m_apBlock.at(i) == nullptr) continue;
 		if(m_apBlock.at(i)->GetBlockPositionY() < WindowMaxY + 20) continue;
@@ -231,26 +306,31 @@ void PracticeScene::DeleteBlocks(){
 	}
 }
 
+/// <summary>
+/// プレイヤー更新処理をします。
+/// </summary>
 void PracticeScene::UpdatePlayers(){
-	UpdateBarMovePlayers();
-
-	int nIndex = m_pPlayerSet->m_nBarIndex;
+	const int& nIndex = m_pPlayerSet->m_nBarIndex;
 	for(int i = 0; i < m_pPlayerSet->m_nBarCount; i++){
 		int j = (i <= nIndex ? nIndex - i : i);
 		if(m_apPlayer.at(j) == nullptr) continue;
 		m_apPlayer.at(j)->Update();
 
-		int& nRefIndex = m_pPlayerSet->m_nBarIndex;
+		const int& nRefIndex = m_pPlayerSet->m_nBarIndex;
 		if(nRefIndex == Invalid) continue;
 
 		if(m_apPlayer.at(j)->GetCollision()) continue;
 		m_apPlayer.at(j)->SetFlash(nRefIndex);
 		UpdateCollisionPlayers();
 	}
+	UpdateBarMovePlayers();
 }
 
+/// <summary>
+/// プレイヤーとブロックの衝突チェックをします。
+/// </summary>
 void PracticeScene::UpdateCollisionPlayers(){
-	int& nIndex = m_pPlayerSet->m_nBarIndex;
+	const int& nIndex = m_pPlayerSet->m_nBarIndex;
 	for(int i = 0; i < m_pBlockSet->m_nBlockCount; i++){
 		//ブロックカラーによって処理変更
 		if(m_apBlock.at(i) == nullptr || m_apBlock.at(i)->GetCollision()) continue;
@@ -259,65 +339,91 @@ void PracticeScene::UpdateCollisionPlayers(){
 		const int& nBlockX = m_apBlock.at(i)->GetBlockPositionX();
 		const int& nBlockY = m_apBlock.at(i)->GetBlockPositionY();
 		if(nBlockY < nPlayerY) continue;
-		m_apBlock.at(i)->SetCollision();
 
 		const int& nBlockHandle = m_apBlock.at(i)->GetBlockHandle();
-		if(nBlockHandle == GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_YELLOW)){
-			//黄色
-			if(nPlayerX == nBlockX) continue;
-			const int& nBlockIndex = m_apBlock.at(i)->GetBlockIndex();
-			m_apPlayer.at(nBlockIndex)->SetCollision();
-		}
-		else if(nBlockHandle == GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_STAR_RED)){
+		const int& nSoundHandle = GetSoundsHandle(SOUND_SE_PLAYER_BLOCK_COLLISION);
+		if(nBlockHandle == GetGraphicsHandle(IMAGE_PRACTICE_STAR_RED)){
 			//赤
-			if(nPlayerX != nBlockX) continue;
-			m_apPlayer.at(nIndex)->SetCollision();
-			UpdateCollisionMovePlayers();
-			return;
+			if(nPlayerX == nBlockX){
+				m_apPlayer.at(nIndex)->SetCollision();
+				UpdateCollisionMovePlayers();
+				PlaySoundMem(nSoundHandle, DX_PLAYTYPE_BACK);
+			}
 		}
 		//白
-		else{
-			ReverseAllCollision();
+		else if(nBlockHandle == GetGraphicsHandle(IMAGE_PRACTICE_STAR_WHITE)) ReverseAllCollision();
+		//黄、緑は特にない
+
+		//通過した石は通過後衝突判定しない
+		m_apBlock.at(i)->SetCollision();
+		return;
+	}
+}
+
+/// <summary>
+/// プレイヤーとブロックの衝突後の処理をします。
+/// </summary>
+void PracticeScene::UpdateCollisionMovePlayers(){
+	//現在地から一番近い移動先を見つける
+	int& nIndex = m_pPlayerSet->m_nBarIndex;
+	if(nIndex == Invalid) return;
+
+	const int& nCount = m_pPlayerSet->m_nBarCount;
+	for(int i = 2; i < nCount * 2; i++){
+		//現在地の左、右の順でチェック
+		const int nCheckIndex = nIndex + (i / 2) * (i % 2 == 0 ? -1 : 1);
+		if(nCheckIndex < 0 || nCheckIndex >= nCount) continue;
+		if(m_apPlayer.at(nCheckIndex) == nullptr || m_apPlayer.at(nCheckIndex)->GetCollision()) continue;
+
+		const int& nPlayerY = m_apPlayer.at(nCheckIndex)->GetPlayerPositionY();
+		for(int j = 0; j < m_pBlockSet->m_nBlockCount; j++){
+			if(m_apBlock.at(j) == nullptr) continue;
+			const int& nBlockY = m_apBlock.at(j)->GetBlockPositionY();
+			const int& nBlockIndex = m_apBlock.at(j)->GetBlockIndex();
+			if(nBlockY < nPlayerY || nBlockIndex != nCheckIndex) continue;
+
+			//移動先が赤なら無視
+			const int& nBlockHandle = m_apBlock.at(j)->GetBlockHandle();
+			if(nBlockHandle == GetGraphicsHandle(IMAGE_PRACTICE_STAR_RED)) break;
+			nIndex = nBlockIndex;
 			return;
 		}
-		//緑はない
 	}
-}
 
-void PracticeScene::UpdateCollisionMovePlayers(){
-	//衝突後場所変更(左側チェック→移動先無ければ右側チェック)
-	int& nIndex = m_pPlayerSet->m_nBarIndex;
-	for(int i = nIndex - 1; i >= 0; i--){
-		if(m_apPlayer.at(i) == nullptr || m_apPlayer.at(i)->GetCollision()) continue;
-		nIndex = i;
-		return;
-	}
-	for(int i = nIndex + 1; i < m_pPlayerSet->m_nBarCount; i++){
-		if(m_apPlayer.at(i) == nullptr || m_apPlayer.at(i)->GetCollision()) continue;
-		nIndex = i;
-		return;
-	}
+	//移動先がなければプレイヤー石を全て赤に
 	nIndex = Invalid;
+	for(int i = 0; i < m_pPlayerSet->m_nBarCount; i++) m_apPlayer.at(i)->SetCollision();
 }
 
+/// <summary>
+/// プレイヤー移動処理をします。
+/// </summary>
 void PracticeScene::UpdateBarMovePlayers(){
 	int& nIndex = m_pPlayerSet->m_nBarIndex;
+	if(nIndex == Invalid) return;
 	const int& nMaxIndex = m_pPlayerSet->m_nBarCount;
-	int nDefIndex = nIndex;
-	if(nIndex == Invalid){
-		if(m_pFlagSet->m_bGameOver) return;
-		m_pFlagSet->m_bGameOver = TRUE;
-		m_pIndexSet->m_nFinishStageIndex = m_pAnime->SetAnimationCount(m_pStageSet->m_nFinishStageCount);
+	const int anKey[7] = { KEY_INPUT_S, KEY_INPUT_D, KEY_INPUT_F, KEY_INPUT_SPACE, KEY_INPUT_J, KEY_INPUT_K, KEY_INPUT_L };
+	const int nDefIndex = nIndex;
+	//対応キーを押したとき
+	for(int i = 0; i < nMaxIndex; i++){
+		if(IsPushProcess(anKey[i]) && !m_apPlayer.at(i)->GetCollision()){
+			nIndex = i;
+			PlaySoundMem(GetSoundsHandle(SOUND_SE_BLOCK_MOVE), DX_PLAYTYPE_BACK);
+		}
 	}
-	else if(IsFixedProcess(KEY_INPUT_LEFT) && nIndex > 0){
+	//左右キーを押したとき
+	if(IsFixedProcess(KEY_INPUT_LEFT) && nIndex > 0){
 		while(nIndex >= 0){
 			nIndex--;
 			if(nIndex < 0){
 				nIndex = nDefIndex;
 				break;
 			}
-			int bNotCollision = !m_apPlayer.at(nIndex)->GetCollision();
-			if(bNotCollision) break;
+
+			const int& bNotCollision = !m_apPlayer.at(nIndex)->GetCollision();
+			if(!bNotCollision) continue;
+			PlaySoundMem(GetSoundsHandle(SOUND_SE_BLOCK_MOVE), DX_PLAYTYPE_BACK);
+			break;
 		}
 	}
 	else if(IsFixedProcess(KEY_INPUT_RIGHT) && nIndex < nMaxIndex - 1){
@@ -327,75 +433,89 @@ void PracticeScene::UpdateBarMovePlayers(){
 				nIndex = nDefIndex;
 				break;
 			}
-			int bNotCollision = !m_apPlayer.at(nIndex)->GetCollision();
-			if(bNotCollision) break;
+
+			const int& bNotCollision = !m_apPlayer.at(nIndex)->GetCollision();
+			if(!bNotCollision) continue;
+			PlaySoundMem(GetSoundsHandle(SOUND_SE_BLOCK_MOVE), DX_PLAYTYPE_BACK);
+			break;
 		}
 	}
 }
 
+/// <summary>
+/// 衝突判定を反転します。
+/// </summary>
 void PracticeScene::ReverseAllCollision(){
 	for(int i = 0; i < m_pPlayerSet->m_nBarCount; i++){
 		if(m_apPlayer.at(i) == nullptr || i == m_pPlayerSet->m_nBarIndex) continue;
 		m_apPlayer.at(i)->ReverseCollision();
 	}
+	PlaySoundMem(GetSoundsHandle(SOUND_SE_WHITE_BLOCK_COLLISION), DX_PLAYTYPE_BACK);
 }
 
 /// <summary>
-/// 毎フレーム描画処理
+/// 描画処理
 /// </summary>
 /// <returns>TRUE</returns>
 void PracticeScene::DrawLoop(){
+	if(m_pFlagSet->m_bFadeout) return;
+
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 192);
-	int nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_BACKGROUND);
+	int nHandle = GetGraphicsHandle(IMAGE_PRACTICE_BACKGROUND);
 	DrawGraph(0, 0, nHandle, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	//魔法陣
-	nHandle = GetDrawMagicHandle();
-	const int nDrawMagicCount = 2;
-	const int anMagicX[nDrawMagicCount] = { WindowCenX - 180, WindowCenX + 180 };
-	const int anMagicY[nDrawMagicCount] = { WindowCenY, WindowCenY };
-	const double dAngle = m_pAnime->GetAnimationCount(m_pIndexSet->m_nAnimeIndex) / 10;
-	const double adAngle[nDrawMagicCount] = { -dAngle, dAngle };
-	for(int i = 0; i < nDrawMagicCount; i++) DrawRotaGraph(anMagicX[i], anMagicY[i], 0.1, adAngle[i], nHandle, TRUE);
-
-	//スコア表示
-	int& nScore = m_pStageSet->m_nGameScore;
-	const int& nHiScore = m_pStageSet->m_nGameHiScore;
-	DrawString(WindowMaxX - 80, 50, "Score", GetColor(255, 255, 255));
-	DrawFormatString(WindowMaxX - 80, 80, GetColor(255, 255, 255), "%d", nScore);
-
-	//ハイスコア表示
-	DrawString(WindowMaxX - 80, 140, "HiScore", GetColor(255, 255, 255));
-	DrawFormatString(WindowMaxX - 80, 170, GetColor(255, 255, 255), "%d", (nScore < nHiScore ? nHiScore : nScore));
 	DrawLoopBlocks();
 	DrawLoopPlayers();
 
 	//フェードアウト
-	if(m_pFlagSet->m_bFadeout){
-		int nAlpha = m_pAnime->GetAnimationSmooth(m_pIndexSet->m_nAnimeIndex, 0, 255);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, nAlpha);
-		DrawGraph(0, 0, GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_BACKGROUND), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	int nAlpha = m_pAnime->GetAnimationSmooth(m_pIndexSet->m_nFinishStageIndex, 0, 255);
+	if(m_pFlagSet->m_bFadeout) nAlpha = 255;
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, nAlpha);
+	DrawGraph(0, 0, nHandle, TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	//スコア表示
+	int& nScore = m_pStageSet->m_nGameScore;
+	const int& nHiScore = m_pStageSet->m_nGameHiScore;
+	DrawString(WindowMaxX - 80, 50, "Score", GetColor(0, 255, 255));
+	DrawFormatString(WindowMaxX - 80, 80, GetColor(255, 255, 255), "%d", nScore);
+
+	//ハイスコア表示
+	DrawString(WindowMaxX - 115, 140, "HighScore", GetColor(255, 255, 0));
+	DrawFormatString(WindowMaxX - 80, 170, GetColor(255, 255, 255), "%d", (nScore < nHiScore ? nHiScore : nScore));
+
+	if(!m_pAnime->IsFinishedAnimationCount(m_pIndexSet->m_nFinishStageIndex)) return;
+	if(!m_pFlagSet->m_bStageClear && !m_pFlagSet->m_bGameOver) return;
+
+	//成功or失敗
+	if(m_pFlagSet->m_bStageClear){
+		nHandle = GetGraphicsHandle(IMAGE_PRACTICE_GAME_CLEAR);
+		DrawRotaGraph(WindowCenX, WindowCenY, 0.8, 0, nHandle, TRUE);
 	}
-	else{
-		if(!m_pAnime->IsFinishedAnimationCount(m_pIndexSet->m_nFinishStageIndex)) return;
-		unsigned int anColor[2] = { GetColor(128,128,128), GetColor(255,255,255) };
-		if(m_pFlagSet->m_bStageClear){
-			DrawString(WindowMaxX / 16 * 8, WindowMaxY / 16 * 8, "Clear!", GetColor(255, 128, 255));
-			DrawString(WindowMaxX / 16 * 8 - 20, WindowMaxY / 16 * 9, "もう一度挑戦しますか？", GetColor(255, 128, 255));
-			DrawString(WindowMaxX / 16 * 7 + 10, WindowMaxY / 16 * 10, "Yes", anColor[m_pFlagSet->m_bReserve]);
-			DrawString(WindowMaxX / 16 * 9 + 10, WindowMaxY / 16 * 10, "No", anColor[!m_pFlagSet->m_bReserve]);
-		}
-		else if(m_pFlagSet->m_bGameOver){
-			DrawString(WindowMaxX / 16 * 8, WindowMaxY / 16 * 8, "Game Over", GetColor(255, 128, 255));
-			DrawString(WindowMaxX / 16 * 8 - 20, WindowMaxY / 16 * 9, "もう一度挑戦しますか? ", GetColor(255, 128, 255));
-			DrawString(WindowMaxX / 16 * 7 + 10, WindowMaxY / 16 * 10, "Yes", anColor[m_pFlagSet->m_bContinue]);
-			DrawString(WindowMaxX / 16 * 9 + 10, WindowMaxY / 16 * 10, "No", anColor[!m_pFlagSet->m_bContinue]);
-		}
+	else if(m_pFlagSet->m_bGameOver){
+		nHandle = GetGraphicsHandle(IMAGE_PRACTICE_GAME_OVER);
+		DrawRotaGraph(WindowCenX, WindowCenY, 0.8, 0, nHandle, TRUE);
 	}
+	//共通
+	nHandle = GetGraphicsHandle(IMAGE_PRACTICE_GAME_RESTART);
+	DrawRotaGraph(WindowCenX, WindowCenY + 50, 0.8, 0, nHandle, TRUE);
+
+	nAlpha = (m_pFlagSet->m_bContinue ? 255 : 0);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, nAlpha);
+	nHandle = GetGraphicsHandle(IMAGE_PRACTICE_SELECT_YES);
+	DrawRotaGraph(WindowCenX - 50, WindowCenY + 100, 0.8, 0, nHandle, TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - nAlpha);
+	nHandle = GetGraphicsHandle(IMAGE_PRACTICE_SELECT_NO);
+	DrawRotaGraph(WindowCenX + 50, WindowCenY + 100, 0.8, 0, nHandle, TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
+/// <summary>
+/// ブロック描画処理をします。
+/// </summary>
 void PracticeScene::DrawLoopBlocks(){
 	for(int i = 0; i < m_pBlockSet->m_nBlockCount; i++){
 		if(m_apBlock.at(i) == nullptr) continue;
@@ -403,6 +523,9 @@ void PracticeScene::DrawLoopBlocks(){
 	}
 }
 
+/// <summary>
+/// プレイヤー描画処理をします。
+/// </summary>
 void PracticeScene::DrawLoopPlayers(){
 	for(int i = 0; i < m_pPlayerSet->m_nBarCount; i++){
 		if(m_apPlayer.at(i) == nullptr) continue;
@@ -410,30 +533,8 @@ void PracticeScene::DrawLoopPlayers(){
 	}
 }
 
-int PracticeScene::GetDrawMagicHandle(){
-	int nHandle;
-	switch(m_pStageSet->m_nRateIndex){
-	case 0:
-		nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_MAGIC_D);
-		break;
-	case 1:
-		nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_MAGIC_C);
-		break;
-	case 2:
-		nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_MAGIC_B);
-		break;
-	case 3:
-		nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_MAGIC_A);
-		break;
-	default:
-		nHandle = GetGraphicsHandle(ResourceImage::IMAGE_PRACTICE_MAGIC_S);
-		break;
-	}
-	return nHandle;
-}
-
 /// <summary>
-/// 終了時処理
+/// 終了処理
 /// </summary>
 /// <returns>TRUE</returns>
 void PracticeScene::Finalize(){
@@ -443,6 +544,9 @@ void PracticeScene::Finalize(){
 	m_pAnime->RestartAllAnimation();
 }
 
+/// <summary>
+/// ブロック終了処理をします。
+/// </summary>
 void PracticeScene::FinalizeBlocks(){
 	for(int i = 0; i < m_pBlockSet->m_nBlockCount; i++){
 		if(m_apBlock.at(i) == nullptr) continue;
@@ -454,6 +558,9 @@ void PracticeScene::FinalizeBlocks(){
 	m_apBlock.shrink_to_fit();//メモリ解放
 }
 
+/// <summary>
+/// プレイヤー終了処理をします。
+/// </summary>
 void PracticeScene::FinalizePlayers(){
 	for(int i = 0; i < m_pPlayerSet->m_nBarCount; i++){
 		if(m_apPlayer.at(i) == nullptr) continue;

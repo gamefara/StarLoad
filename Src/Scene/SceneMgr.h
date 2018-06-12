@@ -26,12 +26,11 @@ public:
 	void DrawLoop() override;
 	void Finalize() override;
 
-	//ˆø”nextScene‚ÉƒV[ƒ“‚ð•ÏX‚·‚é
-	void ChangeScene(Scene eScene)	override { m_eNextScene = eScene; };
-	void SetPhase(Phase ePhase)		override { m_ePhase = ePhase; };
-	int GetPhase()							override { return m_ePhase; };
-	void SetLevel(Level eLevel)		override { m_eLevel = eLevel; };
-	int GetLevel()							override { return m_eLevel; };
+	void ChangeScene(Scene eScene)	override { m_eNextScene = eScene; }
+	void SetPhase(Phase ePhase)		override { m_ePhase = ePhase; }
+	int GetPhase()							override { return m_ePhase; }
+	void SetLevel(Level eLevel)		override { m_eLevel = eLevel; }
+	int GetLevel()							override { return m_eLevel; }
 
 	int GetGraphicsHandle(ResourceImage eImage)	{ return m_pResource->GetGraphicsHandle(eImage); }
 	int GetSoundsHandle(ResourceSound eSound)		{ return m_pResource->GetSoundsHandle(eSound); }
@@ -41,4 +40,6 @@ public:
 	int IsLoadSounds()									{ return m_pResource->IsLoadSounds(); }
 	void SetSoundsBGMVolume(int nPercent)			{ m_pResource->SetSoundsBGMVolume(nPercent); }
 	void SetSoundsSEVolume(int nPercent)			{ m_pResource->SetSoundsSEVolume(nPercent); }
+	void AllSoundsStopBGMVolume()						{ m_pResource->AllSoundsStopBGMVolume(); }
+	void AllSoundsStopSEVolume()						{ m_pResource->AllSoundsStopSEVolume(); }
 };

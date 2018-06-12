@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <assert.h>
 
-const static int nFps = 60;							//1秒間の処理回数
 const static int Success = 0;							//成功時定数
 const static int Invalid = -1;						//失敗時定数
 const static int WindowMinX = 0;						//ウィンドウ左端X座標
@@ -26,14 +25,18 @@ public:
 	virtual void DrawLoop() = 0;
 	virtual void Finalize(){}
 
+	/// <summary>
+	/// フラグ反転処理をします。
+	/// </summary>
+	/// <param name="bFlag">現在のフラグ</param>
 	void ReverseFlag(int& bFlag){ bFlag = !bFlag; }
 };
 
 /// <summary>
-/// ポインタをデリート後にヌルポインタにする
+/// ポインタをデリート後にヌルポインタにします。
 /// </summary>
 template <class T>
-inline void DeletePtr(T*& p) {
-	delete p;
-	p = nullptr;
+inline void DeletePtr(T*& ptr) {
+	delete ptr;
+	ptr = nullptr;
 }

@@ -4,7 +4,8 @@
 extern int IsContinueGame();
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int){
-	//ウィンドウモード変更と初期化と裏画面設定
+	SetWindowText("Star Load");
+	SetOutApplicationLogValidFlag(FALSE);
 	ChangeWindowMode(TRUE);
 	SetGraphMode(WindowMaxX, WindowMaxY, 32);
 
@@ -26,6 +27,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int){
 	return Success;
 }
 
+/// <summary>
+/// ゲームを続けるかどうかフラグをチェックします。
+/// </summary>
+/// <returns>ゲームを続けるかどうか</returns>
 int IsContinueGame(){
 	if(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) return TRUE;
 	return FALSE;

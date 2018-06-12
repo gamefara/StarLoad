@@ -31,23 +31,23 @@ Animation::~Animation()
 }
 
 /// <summary>
-/// 毎フレーム描画以外の処理を行います。
+/// 更新処理
 /// </summary>
 void Animation::Update(){
-	int nIndexSize = static_cast<int>(m_anIndexList.size());
+	const int nIndexSize = static_cast<int>(m_anIndexList.size());
 	if(nIndexSize <= 0) return;
 
 	std::vector<int> anAnimeDeleteList;
 	anAnimeDeleteList.reserve(nIndexSize);
 	UpdateCount(nIndexSize, anAnimeDeleteList);
 
-	int nDeleteSize = static_cast<int>(anAnimeDeleteList.size());
+	const int nDeleteSize = static_cast<int>(anAnimeDeleteList.size());
 	//アニメーションが終了したものがあれば削除
 	if(nDeleteSize > 0){
 		for(int i = 0; i < nDeleteSize; i++){
-			int nIndex = anAnimeDeleteList.at(i);
+			const int nIndex = anAnimeDeleteList.at(i);
 			auto itrFactor = std::find(m_anIndexList.begin(), m_anIndexList.end(), nIndex);
-			int nFindIndex = std::distance(m_anIndexList.begin(), itrFactor);
+			const int nFindIndex = std::distance(m_anIndexList.begin(), itrFactor);
 			m_anIndexList.erase(m_anIndexList.begin() + nFindIndex);
 		}
 	}
@@ -56,9 +56,14 @@ void Animation::Update(){
 	anAnimeDeleteList.shrink_to_fit();
 }
 
+/// <summary>
+/// カウンタを更新します。
+/// </summary>
+/// <param name="nIndexSize">カウンタの配列要素数</param>
+/// <param name="anAnimeDeleteList">アニメーション終了する配列</param>
 void Animation::UpdateCount(const int& nIndexSize, std::vector<int>& anAnimeDeleteList){
 	for(int i = 0; i < nIndexSize; i++){
-		int nIndex = m_anIndexList.at(i);
+		const int nIndex = m_anIndexList.at(i);
 		if(m_anAnimationMaxCount.at(nIndex) == Invalid || !m_abAnimation.at(nIndex)) continue;
 		if(m_anAnimationNowCount.at(nIndex) >= m_anAnimationMaxCount.at(nIndex)){
 			m_anAnimationNowCount.at(nIndex) = Invalid;
@@ -69,7 +74,7 @@ void Animation::UpdateCount(const int& nIndexSize, std::vector<int>& anAnimeDele
 		}
 		else{
 			//遅延指定があれば時間分待機
-			int bDelayCount = (m_anAnimationDelayNowCount.at(nIndex) < m_anAnimationDelayMaxCount.at(nIndex));
+			const int bDelayCount = (m_anAnimationDelayNowCount.at(nIndex) < m_anAnimationDelayMaxCount.at(nIndex));
 			if(bDelayCount) m_anAnimationDelayNowCount.at(nIndex)++;
 			else m_anAnimationNowCount.at(nIndex) += m_anAnimationSpeed.at(nIndex);
 		}

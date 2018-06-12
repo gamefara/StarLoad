@@ -15,6 +15,9 @@ BaseScene::~BaseScene()
 	DeletePtr(m_pAnime);
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void BaseScene::Initialize(){
 	//ファイルチェックをし、なければデフォルト値を作成する
 	InitializeLoadConfigStream();
@@ -24,16 +27,25 @@ void BaseScene::Initialize(){
 	m_pKey->Initialize();
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
 void BaseScene::Update(){
 	m_pAnime->Update();
 	m_pKey->Update();
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void BaseScene::DrawLoop(){
 	m_pAnime->DrawLoop();
 	m_pKey->DrawLoop();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void BaseScene::Finalize(){
 	FinalizeLoadConfigStream();
 	FinalizeLoadResultStream();
@@ -42,6 +54,10 @@ void BaseScene::Finalize(){
 	m_pKey->Finalize();
 }
 
+/// <summary>
+/// Config.jsonファイルを読み込み、音量設定に反映します。
+/// ファイルがない時や破損しているときは、新たにjsonファイルを作成し、初期値を書き込みます。
+/// </summary>
 void BaseScene::InitializeLoadConfigStream(){
 	int nBGMVolume = 0;
 	int nSEVolume = 0;
@@ -85,6 +101,10 @@ void BaseScene::InitializeLoadConfigStream(){
 	m_pResource->SetSoundsSEVolume(nSEVolume);
 }
 
+/// <summary>
+/// Result.jsonファイルを読み込み、結果に反映します。
+/// ファイルがない時や破損しているときは、新たにjsonファイルを作成し、初期値を書き込みます。
+/// </summary>
 void BaseScene::InitializeLoadResultStream(){
 	const int nResultNum = 3;
 	std::string asLevel[nResultNum] = { "Begginer", "Standard", "Hard" };
@@ -141,6 +161,11 @@ void BaseScene::InitializeLoadResultStream(){
 	m_fStream.close();
 }
 
+/// <summary>
+/// 指定の文字列が日付かどうかをチェックします。
+/// </summary>
+/// <param name="sDatetime">対象文字列</param>
+/// <returns>日付形式(YYYY/mm/dd HH:ii:ss)かどうか</returns>
 int BaseScene::EnableConvertDateTime(std::string sDatetime){
 	time_t tNow = time(nullptr);
 	tm tStruct;
@@ -168,6 +193,9 @@ int BaseScene::EnableConvertDateTime(std::string sDatetime){
 	return bConvert;
 }
 
+/// <summary>
+/// Config.jsonファイルに音量情報を書き込みます。
+/// </summary>
 void BaseScene::FinalizeLoadConfigStream(){
 	json11::Json JsonSaveConfigData = json11::Json::object{
 		{ "BGM", GetGameDataVolumeBGM() },
@@ -179,27 +207,30 @@ void BaseScene::FinalizeLoadConfigStream(){
 	m_fStream.close();
 }
 
+/// <summary>
+/// Result.jsonファイルに結果情報を書き込みます。
+/// </summary>
 void BaseScene::FinalizeLoadResultStream(){
 	json11::Json JsonSaveResultData = json11::Json::object{
 		{
 			"Begginer", json11::Json::object{
-				{ "DateTime", GetGameDataDateTime((int)Level::LEVEL_BEGINNER).c_str() },
-				{ "Score", GetGameDataScore((int)Level::LEVEL_BEGINNER) },
-				{ "Rank", GetGameDataRank((int)Level::LEVEL_BEGINNER).c_str() }
+				{ "DateTime", GetGameDataDateTime(static_cast<int>(LEVEL_BEGINNER)).c_str() },
+				{ "Score", GetGameDataScore(static_cast<int>(LEVEL_BEGINNER)) },
+				{ "Rank", GetGameDataRank(static_cast<int>(LEVEL_BEGINNER)).c_str() }
 			}
 		},
 		{
 			"Standard", json11::Json::object{
-				{ "DateTime", GetGameDataDateTime((int)Level::LEVEL_STANDARD).c_str() },
-				{ "Score", GetGameDataScore((int)Level::LEVEL_STANDARD) },
-				{ "Rank", GetGameDataRank((int)Level::LEVEL_STANDARD).c_str() }
+				{ "DateTime", GetGameDataDateTime(static_cast<int>(LEVEL_STANDARD)).c_str() },
+				{ "Score", GetGameDataScore(static_cast<int>(LEVEL_STANDARD)) },
+				{ "Rank", GetGameDataRank(static_cast<int>(LEVEL_STANDARD)).c_str() }
 			}
 		},
 		{
 			"Hard", json11::Json::object{
-				{ "DateTime", GetGameDataDateTime((int)Level::LEVEL_HARD).c_str() },
-				{ "Score", GetGameDataScore((int)Level::LEVEL_HARD) },
-				{ "Rank", GetGameDataRank((int)Level::LEVEL_HARD).c_str() }
+				{ "DateTime", GetGameDataDateTime(static_cast<int>(LEVEL_HARD)).c_str() },
+				{ "Score", GetGameDataScore(static_cast<int>(LEVEL_HARD)) },
+				{ "Rank", GetGameDataRank(static_cast<int>(LEVEL_HARD)).c_str() }
 			}
 		}
 	};
@@ -209,6 +240,10 @@ void BaseScene::FinalizeLoadResultStream(){
 	m_fStream.close();
 }
 
+/// <summary>
+/// 現在時間の文字列を取得します。
+/// </summary>
+/// <returns>現在時間の文字列</returns>
 std::string BaseScene::GetNowDateTime(){
 	//現在時間をそのまま文字列化
 	time_t tNow = time(nullptr);

@@ -10,11 +10,7 @@ public:
 	~Animation();
 
 	void Update() override;
-	void UpdateCount(const int& nIndexSize, std::vector<int>& anAnimeDeleteList);
-	/// <summary>
-	/// 毎フレーム描画処理を行います。
-	/// </summary>
-	void DrawLoop() override {}
+	void DrawLoop() override{}
 
 	/// <summary>
 	/// アニメーションを設定します。
@@ -28,7 +24,7 @@ public:
 		auto itrEnd = m_anAnimationMaxCount.end();
 		auto itrFactor = std::find(itrBegin, itrEnd, Invalid);
 		//要素番号を取得
-		int nIndex = std::distance(itrBegin, itrFactor);
+		const int nIndex = std::distance(itrBegin, itrFactor);
 
 		if(nIndex == m_nMaxIndex) return Invalid;
 
@@ -37,7 +33,8 @@ public:
 		m_abAnimation.at(nIndex) = TRUE;
 		m_anIndexList.push_back(nIndex);
 		return nIndex;
-	};
+	}
+
 	/// <summary>
 	/// 指定の時間分遅延後、アニメーションを設定します。
 	/// </summary>
@@ -47,13 +44,14 @@ public:
 	int SetAnimationDelayCount(const int& nCount, const int& nDelayCount){
 		if(nDelayCount < 0 || nDelayCount >= INT_MAX) return Invalid;
 
-		int nIndex = SetAnimationCount(nCount);
+		const int nIndex = SetAnimationCount(nCount);
 		if(nIndex == Invalid) return Invalid;
 
 		m_anAnimationDelayNowCount.at(nIndex) = 0;
 		m_anAnimationDelayMaxCount.at(nIndex) = nDelayCount;
 		return nIndex;
-	};
+	}
+
 	/// <summary>
 	/// アニメーションの速度決定後、アニメーションを設定します。
 	/// </summary>
@@ -63,12 +61,13 @@ public:
 	int SetAnimationSpeed(const int& nCount, const int& nSpeedCount){
 		if(nSpeedCount < 0 || nSpeedCount >= INT_MAX) return Invalid;
 
-		int nIndex = SetAnimationCount(nCount);
+		const int nIndex = SetAnimationCount(nCount);
 		if(nIndex == Invalid) return Invalid;
 
 		m_anAnimationSpeed.at(nIndex) = nSpeedCount;
 		return nIndex;
 	}
+
 	/// <summary>
 	/// 指定カウンタを取得します。
 	/// </summary>
@@ -78,6 +77,7 @@ public:
 		if(nIndex < 0 || nIndex >= m_nMaxIndex || m_anAnimationMaxCount.at(nIndex) == Invalid) return Invalid;
 		return m_anAnimationNowCount.at(nIndex);
 	}
+
 	/// <summary>
 	/// 指定カウンタ終了値を取得します。
 	/// </summary>
@@ -87,6 +87,7 @@ public:
 		if(nIndex < 0 || nIndex >= m_nMaxIndex || m_anAnimationMaxCount.at(nIndex) == Invalid) return Invalid;
 		return m_anAnimationMaxCount.at(nIndex);
 	}
+
 	/// <summary>
 	/// 指定遅延カウンタを取得します。
 	/// </summary>
@@ -96,6 +97,7 @@ public:
 		if(nIndex < 0 || nIndex >= m_nMaxIndex || m_anAnimationDelayMaxCount.at(nIndex) == Invalid) return Invalid;
 		return m_anAnimationDelayNowCount.at(nIndex);
 	}
+
 	/// <summary>
 	/// 指定遅延カウンタ終了値を取得します。
 	/// </summary>
@@ -105,6 +107,7 @@ public:
 		if(nIndex < 0 || nIndex >= m_nMaxIndex || m_anAnimationDelayMaxCount.at(nIndex) == Invalid) return Invalid;
 		return m_anAnimationDelayMaxCount.at(nIndex);
 	}
+
 	/// <summary>
 	/// 指定カウンタの速度を取得します。
 	/// </summary>
@@ -114,6 +117,7 @@ public:
 		if(nIndex < 0 || nIndex >= m_nMaxIndex || m_anAnimationMaxCount.at(nIndex) == Invalid) return Invalid;
 		return m_anAnimationSpeed.at(nIndex);
 	}
+
 	/// <summary>
 	/// 指定カウントに到達したかチェックします。
 	/// </summary>
@@ -128,6 +132,7 @@ public:
 		if(m_anAnimationNowCount.at(nIndex) == nMatchCount) bMatch = TRUE;
 		return bMatch;
 	}
+
 	/// <summary>
 	/// 指定カウンタがカウントし終えたかチェックします。
 	/// </summary>
@@ -140,6 +145,7 @@ public:
 		if(m_anAnimationNowCount.at(nIndex) == m_anAnimationMaxCount.at(nIndex)) bFinish = TRUE;
 		return bFinish;
 	}
+
 	/// <summary>
 	/// 指定カウントに到達したかチェックします。
 	/// </summary>
@@ -154,6 +160,7 @@ public:
 		if(m_anAnimationDelayNowCount.at(nIndex) == nMatchCount) bMatch = TRUE;
 		return bMatch;
 	}
+
 	/// <summary>
 	/// 指定遅延カウンタがカウントし終えたかチェックします。
 	/// </summary>
@@ -166,6 +173,7 @@ public:
 		if(m_anAnimationDelayNowCount.at(nIndex) == m_anAnimationDelayMaxCount.at(nIndex)) bFinish = TRUE;
 		return bFinish;
 	}
+
 	/// <summary>
 	/// 指定カウンタを停止します。
 	/// </summary>
@@ -177,6 +185,7 @@ public:
 		m_abAnimation.at(nIndex) = FALSE;
 		return TRUE;
 	}
+
 	/// <summary>
 	/// 指定カウンタを再カウントします。
 	/// </summary>
@@ -188,30 +197,33 @@ public:
 		m_abAnimation.at(nIndex) = TRUE;
 		return TRUE;
 	}
+
 	/// /// <summary>
 	/// 登録済みのカウンタを全て停止します。
 	/// </summary>
 	/// <returns></returns>
 	int StopAllAnimation(){
-		int nSize = static_cast<int>(m_anIndexList.size());
+		const int nSize = static_cast<int>(m_anIndexList.size());
 		for(int i = 0; i < nSize; i++){
-			int nIndex = m_anIndexList.at(i);
+			const int nIndex = m_anIndexList.at(i);
 			if(m_abAnimation.at(nIndex) != Invalid) m_abAnimation.at(nIndex) = FALSE;
 		}
 		return TRUE;
 	}
+
 	/// <summary>
 	/// 登録済みのカウンタを全て再カウントします。
 	/// </summary>
 	/// <returns></returns>
 	int RestartAllAnimation(){
-		int nSize = static_cast<int>(m_anIndexList.size());
+		const int nSize = static_cast<int>(m_anIndexList.size());
 		for(int i = 0; i < nSize; i++){
-			int nIndex = m_anIndexList.at(i);
+			const int nIndex = m_anIndexList.at(i);
 			if(m_abAnimation.at(nIndex) != Invalid) m_abAnimation.at(nIndex) = TRUE;
 		}
 		return TRUE;
 	}
+
 	/// <summary>
 	/// 指定カウンタが停止しているかチェックします。
 	/// </summary>
@@ -227,16 +239,17 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	int IsAllStoppedAnimation() const{
-		int nSize = static_cast<int>(m_anIndexList.size());
+		const int nSize = static_cast<int>(m_anIndexList.size());
 		int nCount = 0;
 		for(int i = 0; i < nSize; i++){
-			int nIndex = m_anIndexList.at(i);
+			const int nIndex = m_anIndexList.at(i);
 			if(m_abAnimation.at(nIndex)) break;
 			nCount++;
 		}
-		int bAllStop = (nCount == nSize);
+		const int bAllStop = (nCount == nSize);
 		return bAllStop;
 	}
+
 	/// <summary>
 	/// 等速変化の内分カウンタです。
 	/// </summary>
@@ -251,10 +264,11 @@ public:
 		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
 		T tMax = static_cast<T>(m_anAnimationMaxCount.at(nIndex));
 
-		float fRatio = static_cast<float>(tNow) / static_cast<float>(tMax);
+		const float fRatio = static_cast<float>(tNow) / static_cast<float>(tMax);
 		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
 	}
+
 	/// <summary>
 	/// 加速変化の内分カウンタです。
 	/// </summary>
@@ -268,11 +282,12 @@ public:
 
 		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
 		T tMax = static_cast<T>(m_anAnimationMaxCount.at(nIndex));
-		float fDiv = static_cast<float>(tNow) / static_cast<float>(tMax);
-		float fRatio = fDiv * fDiv;
+		const float fDiv = static_cast<float>(tNow) / static_cast<float>(tMax);
+		const float fRatio = fDiv * fDiv;
 		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 減速変化の内分カウンタです。
 	/// </summary>
@@ -286,11 +301,12 @@ public:
 
 		T tNow = static_cast<T>(m_anAnimationNowCount.at(nIndex));
 		T tMax = static_cast<T>(m_anAnimationMaxCount.at(nIndex));
-		float fDiv = static_cast<float>(tNow) / static_cast<float>(tMax);
-		float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+		const float fDiv = static_cast<float>(tNow) / static_cast<float>(tMax);
+		const float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
 		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 等速往復変化の内分カウンタです。
 	/// </summary>
@@ -308,17 +324,18 @@ public:
 		T tValue;
 		if(tNow < tCenter){
 			if(tStart == tMiddle) return tMiddle;
-			float fRatio = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			const float fRatio = static_cast<float>(tNow) / static_cast<float>(tCenter);
 			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
 			if(tMiddle == tEnd) return tEnd;
 			tNow -= tCenter;
-			float fRatio = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			const float fRatio = static_cast<float>(tNow) / static_cast<float>(tCenter);
 			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 開始値～中間値、中間値→終了値までそれぞれ加速往復変化の内分カウンタです。
 	/// </summary>
@@ -336,19 +353,20 @@ public:
 		T tValue;
 		if(tNow < tCenter){
 			if(tStart == tMiddle) return tMiddle;
-			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
-			float fRatio = fDiv * fDiv;
+			const float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			const float fRatio = fDiv * fDiv;
 			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
 			if(tMiddle == tEnd) return tEnd;
 			tNow -= tCenter;
-			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
-			float fRatio = fDiv * fDiv;
+			const float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			const float fRatio = fDiv * fDiv;
 			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 開始値～中間値、中間値→終了値までそれぞれ減速往復変化の内分カウンタです。
 	/// </summary>
@@ -367,19 +385,20 @@ public:
 		T tValue;
 		if(tNow < tCenter){
 			if(tStart == tMiddle) return tMiddle;
-			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
-			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			const float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			const float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
 			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
 			if(tMiddle == tEnd) return tEnd;
 			tNow -= tCenter;
-			float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
-			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			const float fDiv = static_cast<float>(tNow) / static_cast<float>(tCenter);
+			const float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
 			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 開始値～中間値まで減速、中間値→終了値まで加速の往復変化の内分カウンタです。
 	/// </summary>
@@ -396,8 +415,7 @@ public:
 		T tCenter = m_anAnimationMaxCount.at(nIndex) / static_cast<T>(2);
 		if(tNow < tCenter) return GetAnimationSlowDownLaps(nIndex, tStart, tMiddle, tEnd);
 		else return GetAnimationAccelerateLaps(nIndex, tStart, tMiddle, tEnd);
-	};
-
+	}
 	//↓nIndexのアニメーションを介さず値を取得する用
 
 	/// <summary>
@@ -413,10 +431,11 @@ public:
 		if(nNow <= 0) return tStart;
 		if(tStart == tEnd || nNow >= nMax || nMax <= 0) return tEnd;
 
-		float fRatio = static_cast<float>(nNow) / static_cast<float>(nMax);
+		const float fRatio = static_cast<float>(nNow) / static_cast<float>(nMax);
 		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 加速変化の内分カウンタです。
 	/// (アニメーションカウンタを用いずに値を出したい時用)
@@ -430,11 +449,12 @@ public:
 		if(nNow <= 0) return tStart;
 		if(tStart == tEnd || nNow >= nMax || nMax <= 0) return tEnd;
 
-		float fDiv = static_cast<float>(nNow) / static_cast<float>(nMax);
-		float fRatio = fDiv * fDiv;
+		const float fDiv = static_cast<float>(nNow) / static_cast<float>(nMax);
+		const float fRatio = fDiv * fDiv;
 		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 減速変化の内分カウンタです。
 	/// (アニメーションカウンタを用いずに値を出したい時用)
@@ -448,11 +468,12 @@ public:
 		if(nNow <= 0) return tStart;
 		if(tStart == tEnd || nNow >= nMax || nMax <= 0) return tEnd;
 
-		float fDiv = static_cast<float>(nNow) / static_cast<float>(nMax);
-		float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+		const float fDiv = static_cast<float>(nNow) / static_cast<float>(nMax);
+		const float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
 		T tValue = tStart + static_cast<T>((tEnd - tStart) * fRatio);
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 等速往復変化の内分カウンタです。
 	/// </summary>
@@ -471,17 +492,18 @@ public:
 		T tValue;
 		if(nNow < nCenter){
 			if(tStart == tMiddle) return tMiddle;
-			float fRatio = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			const float fRatio = static_cast<float>(nNow) / static_cast<float>(nCenter);
 			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
 			if(tMiddle == tEnd) return tEnd;
 			nNow -= nCenter;
-			float fRatio = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			const float fRatio = static_cast<float>(nNow) / static_cast<float>(nCenter);
 			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 開始値～中間値、中間値→終了値までそれぞれ加速往復変化の内分カウンタです。
 	/// </summary>
@@ -500,19 +522,20 @@ public:
 		T tValue;
 		if(nNow < nCenter){
 			if(tStart == tMiddle) return tMiddle;
-			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
-			float fRatio = fDiv * fDiv;
+			const float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			const float fRatio = fDiv * fDiv;
 			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
 			if(tMiddle == tEnd) return tEnd;
 			nNow -= nCenter;
-			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
-			float fRatio = fDiv * fDiv;
+			const float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			const float fRatio = fDiv * fDiv;
 			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 開始値～中間値、中間値→終了値までそれぞれ減速往復変化の内分カウンタです。
 	/// </summary>
@@ -531,19 +554,20 @@ public:
 		T tValue;
 		if(nNow < nCenter){
 			if(tStart == tMiddle) return tMiddle;
-			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
-			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			const float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			const float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
 			tValue = tStart + static_cast<T>((tMiddle - tStart) * fRatio);
 		}
 		else{
 			if(tMiddle == tEnd) return tEnd;
 			nNow -= nCenter;
-			float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
-			float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
+			const float fDiv = static_cast<float>(nNow) / static_cast<float>(nCenter);
+			const float fRatio = 1 - (1 - fDiv) * (1 - fDiv);
 			tValue = tMiddle + static_cast<T>((tEnd - tMiddle) * fRatio);
 		}
 		return tValue;
-	};
+	}
+
 	/// <summary>
 	/// 開始値～中間値まで減速、中間値→終了値まで加速の往復変化の内分カウンタです。
 	/// </summary>
@@ -561,7 +585,7 @@ public:
 
 		if(nNow < nCenter) return GetAnimationSlowDownLaps(tStart, tMiddle, tEnd, nNow, nCenter, nMax);
 		else return GetAnimationAccelerateLaps(tStart, tMiddle, tEnd, nNow, nCenter, nMax);
-	};
+	}
 private:
 	const int m_nMaxIndex = 128;
 
@@ -572,5 +596,7 @@ private:
 	std::vector<int> m_anAnimationSpeed;
 	std::vector<int> m_abAnimation;
 	std::vector<int> m_anIndexList;
+
+	void UpdateCount(const int& nIndexSize, std::vector<int>& anAnimeDeleteList);
 };
  
