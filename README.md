@@ -14,7 +14,7 @@ ___
 
 # VisualStudioで実行する場合  
 本作品はDXライブラリを使用しています。  
-__VisualStudioで実行するためには、初めに設定することがあります。 __ 
+__VisualStudioで実行するためには、初めに設定することがあります。__ 
   
 VisualStudioのバージョンごとに少し異なりますが、  
 http://dxlib.o.oo7.jp/dxuse.html  
