@@ -1,4 +1,6 @@
+使用した素材、ライブラリの一覧
 (敬称略)
+
 ライブラリ(json11 C++)：dropbox
 https://github.com/dropbox/json11
 DXライブラリ
