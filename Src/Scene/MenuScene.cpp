@@ -556,7 +556,7 @@ void MenuScene::DrawPhaseResult(){
 	//ÉwÉbÉ_
 	const unsigned int& nColor = GetColor(255, 255, 255);
 	DrawString(nBaseX + 150, nBaseY - 60, "Date", nColor);
-	DrawString(nBaseX + 310, nBaseY - 60, "Score", nColor);
+	DrawString(nBaseX + 300, nBaseY - 60, "Score", nColor);
 	DrawString(nBaseX + 410, nBaseY - 60, "Rank", nColor);
 
 	//é¿ê—
@@ -609,7 +609,7 @@ void MenuScene::DrawPhaseConfig(){
 	//âπó Åìï\é¶
 	const unsigned int& nColor = GetColor(255, 255, 255);
 	DrawFormatString(nGaugeMaxX + 20, nBaseY - 10, nColor, "%.2f%%", fBGMPercent * 100);
-	DrawFormatString(nGaugeMaxX + 20, nBaseY + 35, nColor, "%.2f%%", fSEPercent * 100);
+	DrawFormatString(nGaugeMaxX + 20, nBaseY + 30, nColor, "%.2f%%", fSEPercent * 100);
 
 	//ê‡ñæèëÇ´
 	nHandle = GetGraphicsHandle(IMAGE_TITLE_CONFIG_DISPLAY_DESCRIPTION);
