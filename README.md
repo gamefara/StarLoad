@@ -49,4 +49,8 @@ ___
   
 ___
 
-copyright (c) 2018 H.Okuyama.
+# コード管理
+
+以前はGithub上で管理していたが、Gitlabへの移行と同時に名前を本名からネット上のニックネームに変更した。
+
+Copyright 2018 Fara
